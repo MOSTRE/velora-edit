@@ -1,0 +1,182 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SearchOverlay from '../../components/SearchOverlay.astro';
+import CookieConsent from '../../components/CookieConsent.astro';
+import { getPublishedProducts, getProductBySlug, getRelated } from '../../lib/store';
+import { formatPrice, badgesFor } from '../../lib/types';
+import { productJsonLd, breadcrumbJsonLd } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  return getPublishedProducts().map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const product = getProductBySlug(slug as string);
+
+if (!product || !product.affiliate_url) {
+  return Astro.redirect('/404');
+}
+
+const related = getRelated(product, 4);
+const badges = badgesFor(product);
+const priceMode = (import.meta.env.PUBLIC_PRICE_MODE as string) || 'cached';
+const showPrice = product.price != null && priceMode !== 'redirect';
+const isMock = product.affiliate_url.includes('example.com');
+---
+<Base
+  title={product.seo_title || `${product.title} — VELORA EDIT`}
+  description={product.seo_description || product.description}
+  canonical={`https://velora-edit.pages.dev/product/${product.slug}`}
+  ogImage={product.og_image || product.thumbnail_url}
+  jsonLd={[productJsonLd(product), breadcrumbJsonLd([{ name: 'Home', url: '/' }, { name: product.category, url: `/jewelry/${product.category}` }, { name: product.title, url: `/product/${product.slug}` }])]}
+>
+  <Header slot="header" />
+  <Footer slot="footer" />
+
+  <div class="wrap crumb tiny muted">
+    <a href="/">Home</a> / <a href="/jewelry">Jewelry</a> / <a href={`/jewelry/${product.category}`}>{product.category}</a> / {product.title}
+  </div>
+
+  <div class="wrap pdp">
+    <div class="gallery">
+      <img class="main" src={product.image_urls[0]} alt={product.title} width="800" height="1066" fetchpriority="high" decoding="async" data-main />
+      <div class="thumbs">
+        {product.image_urls.map((u, i) => (
+          <button data-thumb={u} aria-label={`View image ${i + 1}`}>
+            <img src={u} alt="" aria-hidden="true" loading="lazy" width="200" height="266" />
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="info">
+      <p class="eyebrow"><span class="rule"></span>{product.category} · {product.gender === 'unisex' ? 'Unisex' : product.gender === 'men' ? "Men's" : "Women's"}</p>
+      <h1>{product.title}</h1>
+      {product.subtitle && <p class="serif sub">{product.subtitle}</p>}
+      <div class="pricerow">
+        {showPrice ? (
+          <span class="price big">{formatPrice(product)}</span>
+        ) : (
+          <span class="price big">See current price on AliExpress</span>
+        )}
+        {product.original_price ? <span class="price-was">€{product.original_price.toFixed(2)}</span> : null}
+      </div>
+      {badges.length > 0 && <div class="badges">{badges.map((b) => <span class="badge badge-line">{b}</span>)}</div>}
+      {product.demo && <p class="tiny demo">Demo piece — sample data for development, not a live AliExpress listing.</p>}
+
+      <p class="desc">{product.description}</p>
+
+      {product.material && <p class="small"><strong>Material:</strong> {product.material}</p>}
+
+      <div class="editor">
+        <p class="eyebrow">Editor's note</p>
+        <p class="serif note">“{product.editor_note}”</p>
+      </div>
+
+      <div class="ctabox">
+        <a
+          class="btn btn-gold big-cta"
+          href={product.affiliate_url}
+          target="_blank"
+          rel="sponsored noopener"
+          data-affiliate-click={product.id}
+          data-affiliate-url={product.affiliate_url}
+        >Shop on AliExpress</a>
+        <p class="tiny muted">Affiliate disclosure: this link may earn VELORA EDIT a commission at no additional cost to you.</p>
+        {isMock && <p class="tiny mock">Mock affiliate destination — development link, not a real person's link.</p>}
+      </div>
+
+      <details open>
+        <summary>Why we picked it</summary>
+        <p class="small muted">Chosen for proportion, finish and ease. {product.editor_note}</p>
+      </details>
+      <details>
+        <summary>Details</summary>
+        <ul class="small muted">
+          <li>Category: {product.category}</li>
+          {product.material && <li>Material: {product.material}</li>}
+          {product.color && <li>Finish: {product.color}-tone</li>}
+          <li>Intended for: {product.gender}</li>
+          <li>Tags: {product.tags.join(', ')}</li>
+        </ul>
+      </details>
+      <details>
+        <summary>Shipping & returns</summary>
+        <p class="small muted">VELORA EDIT does not sell or fulfill products. Shipping, returns and support are handled by AliExpress under their policies — check the current terms on the source page before ordering.</p>
+      </details>
+      <details>
+        <summary>Affiliate disclosure</summary>
+        <p class="small muted">VELORA EDIT participates in affiliate programs. Some links on this page are affiliate links, which means we may earn a commission when you make a purchase through them, at no additional cost to you. <a href="/affiliate-disclosure">Read the full disclosure</a>.</p>
+      </details>
+    </div>
+  </div>
+
+  {related.length > 0 && (
+    <section class="section hairline">
+      <div class="wrap">
+        <h2 class="reveal">Related pieces.</h2>
+        <div class="grid-products">{related.map((p) => <ProductCard product={p} />)}</div>
+      </div>
+    </section>
+  )}
+
+  <SearchOverlay />
+  <CookieConsent />
+</Base>
+
+<script>
+  // @ts-nocheck — browser-only gallery/analytics script
+  (function () {
+    // Gallery
+    var main = document.querySelector('[data-main]');
+    document.querySelectorAll('[data-thumb]').forEach(function (b) {
+      b.addEventListener('click', function () { if (main) main.setAttribute('src', b.getAttribute('data-thumb') || ''); });
+    });
+    // product_view
+    try {
+      var arr = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
+      arr.push({ event: 'product_view', product_id: document.querySelector('[data-affiliate-click]')?.getAttribute('data-affiliate-click'), timestamp: new Date().toISOString(), anonymous_session_id: localStorage.getItem('velora-sid') || (localStorage.setItem('velora-sid', Math.random().toString(36).slice(2)), localStorage.getItem('velora-sid')), page_url: location.href, referrer: document.referrer || undefined });
+      localStorage.setItem('velora-events-v1', JSON.stringify(arr.slice(-2000)));
+    } catch (e) {}
+    // affiliate_click — real outbound navigation, analytics separately
+    document.querySelectorAll('[data-affiliate-click]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        try {
+          var arr2 = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
+          arr2.push({ event: 'affiliate_click', product_id: a.getAttribute('data-affiliate-click'), timestamp: new Date().toISOString(), anonymous_session_id: localStorage.getItem('velora-sid') || 'x', page_url: location.href });
+          localStorage.setItem('velora-events-v1', JSON.stringify(arr2.slice(-2000)));
+        } catch (e) {}
+      });
+    });
+    // Wishlist is handled on /wishlist via device-local storage.
+  })();
+</script>
+
+<style>
+  .crumb { padding: 20px 24px 0; }
+  .crumb a { text-decoration: underline; text-underline-offset: 3px; }
+  .pdp { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; padding: 24px 24px 72px; }
+  .gallery .main { width: 100%; border: 1px solid var(--line); background: #ece7dd; aspect-ratio: 3/4; object-fit: cover; }
+  .thumbs { display: flex; gap: 8px; margin-top: 10px; }
+  .thumbs button { border: 1px solid var(--line); background: #fff; padding: 0; cursor: pointer; width: 72px; }
+  .thumbs img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+  h1 { font-size: clamp(38px, 4.5vw, 60px); margin: 8px 0; }
+  .sub { font-size: 20px; color: #3a352e; margin: 0 0 12px; }
+  .big { font-size: 24px; }
+  .pricerow { margin: 8px 0; }
+  .badges { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+  .demo { background: #efeae1; display: inline-block; padding: 6px 10px; }
+  .mock { background: #fff7e6; border: 1px solid #e8d9ae; padding: 8px 10px; }
+  .desc { font-size: 17px; margin: 16px 0; }
+  .editor { border-left: 2px solid var(--gold); padding-left: 16px; margin: 20px 0; }
+  .note { font-size: 22px; font-style: italic; }
+  .ctabox { border: 1px solid var(--line); background: #fff; padding: 20px; margin: 20px 0; position: sticky; }
+  .big-cta { width: 100%; padding: 18px; font-size: 13px; }
+  details { border-top: 1px solid var(--line); padding: 14px 0; }
+  summary { cursor: pointer; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+  h2 { font-size: clamp(28px, 3.5vw, 42px); margin-bottom: 20px; }
+  @media (max-width: 900px) { .pdp { grid-template-columns: 1fr; } }
+</style>

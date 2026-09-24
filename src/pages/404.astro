@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base title="Not found — VELORA EDIT" description="This piece hasn't made it into the edit." noindex={true}>
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>404</p>
+    <h1>This piece hasn't made it into the edit.</h1>
+    <p class="muted">The page moved, or was never curated. Try the latest selection instead.</p>
+    <p><a class="btn" href="/edits">Explore the edit</a> <a class="btn btn-ghost" href="/">Home</a></p>
+  </div>
+</Base>
+<style>.page{padding:80px 24px;text-align:center;max-width:640px}h1{font-size:clamp(36px,5vw,60px);margin:12px 0 16px}</style>

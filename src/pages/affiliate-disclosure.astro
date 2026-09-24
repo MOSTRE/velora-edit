@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base title="Affiliate Disclosure — VELORA EDIT" description="How affiliate links work on VELORA EDIT." canonical="https://velora-edit.pages.dev/affiliate-disclosure">
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap legal">
+    <p class="eyebrow"><span class="rule"></span>Transparency</p>
+    <h1>Affiliate disclosure.</h1>
+    <p class="lede">VELORA EDIT participates in affiliate programs. Some links on this website are affiliate links, which means we may earn a commission when you make a purchase through them, at no additional cost to you.</p>
+    <p>Every shopping button is labelled with its destination (“Shop on AliExpress”), carries <code>rel="sponsored noopener"</code>, and sits next to this disclosure — never hidden, never cloaked, never redirected through unrelated domains.</p>
+    <p>Commissions support our curation. They never change what we include: pieces earn their place on proportion, finish and everyday wear.</p>
+  </div>
+</Base>
+<style>.legal{max-width:760px;padding:48px 24px 72px}h1{font-size:clamp(40px,6vw,68px)}.lede{font-family:var(--serif);font-size:22px}</style>

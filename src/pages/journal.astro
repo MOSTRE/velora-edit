@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { getArticles } from '../lib/store';
+const articles = getArticles();
+---
+<Base title="Journal — VELORA EDIT" description="Notes on wearing jewelry well: stacks, value, men's jewelry and gold-tone guides." canonical="https://velora-edit.pages.dev/journal">
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>Journal</p>
+    <h1>Notes on wearing<br />it well.</h1>
+    <div class="grid-3">
+      {articles.map((a) => (
+        <a class="card reveal" href={`/journal/${a.slug}`}>
+          <div style="aspect-ratio:16/10;overflow:hidden"><img src={a.image} alt={a.title} loading="lazy" width="800" height="500" /></div>
+          <div style="padding:20px"><p class="tiny muted">{a.date} · {a.read_minutes} min</p><h2 class="serif" style="font-size:26px;margin:6px 0">{a.title}</h2><p class="small muted">{a.excerpt}</p></div>
+        </a>
+      ))}
+    </div>
+  </div>
+  <SearchOverlay /><CookieConsent />
+</Base>
+<style>.page{padding:48px 24px 72px}h1{font-size:clamp(42px,6vw,76px);margin:8px 0 24px}</style>

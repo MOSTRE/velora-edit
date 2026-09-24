@@ -1,0 +1,46 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SearchOverlay from '../../components/SearchOverlay.astro';
+import CookieConsent from '../../components/CookieConsent.astro';
+import { getByCategory } from '../../lib/store';
+import { CATEGORIES } from '../../lib/types';
+
+export async function getStaticPaths() {
+  return CATEGORIES.map((c) => ({ params: { category: c.slug } }));
+}
+const { category } = Astro.params;
+const meta = CATEGORIES.find((c) => c.slug === category);
+if (!meta) return Astro.redirect('/404');
+const sort = Astro.url.searchParams.get('sort') || 'featured';
+let products = getByCategory(category as string);
+if (sort === 'price-asc') products = [...products].sort((a, b) => (a.price ?? 999) - (b.price ?? 999));
+if (sort === 'price-desc') products = [...products].sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+if (sort === 'newest') products = [...products].sort((a, b) => Number(b.is_new) - Number(a.is_new));
+---
+<Base title={`${meta.title} — VELORA EDIT`} description={meta.description} canonical={`https://velora-edit.pages.dev/jewelry/${meta.slug}`}>
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>Jewelry · {products.length} pieces</p>
+    <h1>{meta.title}.</h1>
+    <p class="muted">{meta.description}</p>
+    <div class="toolbar">
+      <span class="tiny muted">Sort:</span>
+      <a href={`/jewelry/${meta.slug}`} class={sort === 'featured' ? 'on' : ''}>Featured</a>
+      <a href={`/jewelry/${meta.slug}?sort=newest`} class={sort === 'newest' ? 'on' : ''}>Newest</a>
+      <a href={`/jewelry/${meta.slug}?sort=price-asc`} class={sort === 'price-asc' ? 'on' : ''}>Price ↑</a>
+      <a href={`/jewelry/${meta.slug}?sort=price-desc`} class={sort === 'price-desc' ? 'on' : ''}>Price ↓</a>
+    </div>
+    <p class="tiny muted">Filters for price, style, color, material, gender and collection live in the admin roadmap — this MVP sorts a tightly curated set.</p>
+    {products.length === 0 ? <p>This piece hasn't made it into the edit yet.</p> : <div class="grid-products">{products.map((p) => <ProductCard product={p} />)}</div>}
+  </div>
+  <SearchOverlay /><CookieConsent />
+</Base>
+<style>
+  .page{padding:48px 24px 72px}h1{font-size:clamp(42px,6vw,76px);margin:8px 0}
+  .toolbar{display:flex;gap:14px;align-items:center;margin:20px 0;font-size:13px}
+  .toolbar a{border-bottom:1px solid transparent;padding-bottom:2px}
+  .toolbar a.on{border-color:#111;font-weight:700}
+</style>

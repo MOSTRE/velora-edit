@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SearchOverlay from '../../components/SearchOverlay.astro';
+import CookieConsent from '../../components/CookieConsent.astro';
+import { getArticle, getArticles, getProductBySlug } from '../../lib/store';
+import type { Product } from '../../lib/types';
+import { articleJsonLd } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  return getArticles().map((a) => ({ params: { slug: a.slug } }));
+}
+const { slug } = Astro.params;
+const article = getArticle(slug as string);
+if (!article) return Astro.redirect('/404');
+const related = article.related_slugs.map(getProductBySlug).filter((p): p is Product => Boolean(p));
+---
+<Base
+  title={`${article.title} — VELORA EDIT Journal`}
+  description={article.excerpt}
+  canonical={`https://velora-edit.pages.dev/journal/${article.slug}`}
+  ogImage={article.image}
+  jsonLd={[articleJsonLd(article)]}
+>
+  <Header slot="header" /><Footer slot="footer" />
+  <article class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>Journal · {article.read_minutes} min read</p>
+    <h1>{article.title}</h1>
+    <p class="serif sub">{article.excerpt}</p>
+    <img class="cover" src={article.image} alt={article.title} width="800" height="500" loading="eager" />
+    {article.body.map((p) => <p class="body">{p}</p>)}
+    {related.length > 0 && (
+      <section>
+        <h2>Worn in this story.</h2>
+        <p class="tiny muted">Affiliate disclosure: links below may earn VELORA EDIT a commission at no extra cost to you.</p>
+        <div class="grid-products">{related.map((p) => <ProductCard product={p} />)}</div>
+      </section>
+    )}
+  </article>
+  <SearchOverlay /><CookieConsent />
+</Base>
+<style>
+  .page{max-width:760px;padding:48px 24px 72px}
+  h1{font-size:clamp(38px,5.5vw,64px);margin:8px 0}
+  .sub{font-size:22px;color:#3a352e}
+  .cover{width:100%;margin:24px 0;border:1px solid var(--line)}
+  .body{font-size:18px;margin:18px 0}
+  h2{font-size:32px;margin:36px 0 12px}
+</style>

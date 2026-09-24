@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { CATEGORIES } from '../lib/types';
+---
+<Base title="Jewelry — VELORA EDIT" description="Rings, necklaces, bracelets, earrings and chains — curated jewelry with a quiet-luxury point of view." canonical="https://velora-edit.pages.dev/jewelry">
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>Jewelry</p>
+    <h1>All jewelry.</h1>
+    <div class="grid-3">
+      {CATEGORIES.map((c) => (
+        <a class="card reveal" href={`/jewelry/${c.slug}`}>
+          <div style="padding:28px"><h2 class="serif" style="font-size:30px">{c.title}</h2><p class="muted">{c.description}</p><span class="tiny view">Explore →</span></div>
+        </a>
+      ))}
+    </div>
+  </div>
+  <SearchOverlay /><CookieConsent />
+</Base>
+<style>.page{padding:48px 24px 72px}h1{font-size:clamp(42px,6vw,76px);margin:8px 0 20px}.view{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}</style>

@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { COLLECTIONS } from '../lib/types';
+---
+<Base title="All Edits — VELORA EDIT" description="Editorial collections: Under €20, Quiet Luxury, Minimal Gold, For Him, For Her and more." canonical="https://velora-edit.pages.dev/edits">
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>Collections</p>
+    <h1>The Edits.</h1>
+    <p class="muted">Small, opinionated selections — never an endless catalogue.</p>
+    <div class="grid-3">
+      {COLLECTIONS.map((c) => (
+        <a class="card reveal" href={`/edit/${c.slug}`}>
+          <div style="aspect-ratio:4/3;overflow:hidden"><img src={c.image} alt={c.title} loading="lazy" width="800" height="600" /></div>
+          <div style="padding:20px"><h2 class="serif" style="font-size:26px">{c.title}</h2><p class="small muted">{c.description}</p></div>
+        </a>
+      ))}
+    </div>
+  </div>
+  <SearchOverlay /><CookieConsent />
+</Base>
+<style>.page{padding:48px 24px 72px}h1{font-size:clamp(42px,6vw,76px);margin:8px 0 8px}.grid-3{margin-top:28px}</style>

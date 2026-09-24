@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base title="Privacy — VELORA EDIT" description="How VELORA EDIT collects and uses data." canonical="https://velora-edit.pages.dev/privacy">
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap legal">
+    <p class="eyebrow"><span class="rule"></span>Legal</p>
+    <h1>Privacy.</h1>
+    <p class="muted">Last updated: September 2026. [Legal entity details to be configured before launch — placeholders below.]</p>
+    <h2>What we collect</h2>
+    <ul>
+      <li><strong>Anonymous analytics:</strong> product views, affiliate clicks (product, timestamp, anonymous session id, referrer where permitted, page URL, device class). No payment data, no unnecessary identification.</li>
+      <li><strong>Newsletter:</strong> email address + consent timestamp, only when you subscribe.</li>
+      <li><strong>Contact:</strong> name, email, message — only when you write to us.</li>
+      <li><strong>Cookies:</strong> necessary (site function), analytics and marketing (only with your consent via the banner).</li>
+    </ul>
+    <h2>Why</h2>
+    <p>To run the publication, understand which pieces resonate, and send the emails you asked for. Optional analytics load only after consent.</p>
+    <h2>Affiliate links</h2>
+    <p>Outbound “Shop on AliExpress” links are affiliate links and carry <code>rel="sponsored noopener"</code>. The retailer may set its own cookies under its own policy once you leave our site.</p>
+    <h2>Third parties</h2>
+    <p>Supabase (database/auth, when configured), Cloudflare (hosting). No data sale. Contact: [contact email to be configured]. Data controller: [legal name, address to be configured].</p>
+    <h2>Your rights</h2>
+    <p>Access, correction, deletion: write to [contact email]. Newsletter unsubscribe link in every email.</p>
+  </div>
+</Base>
+<style>.legal{max-width:760px;padding:48px 24px 72px}h1{font-size:clamp(40px,6vw,68px)}h2{font-family:var(--sans);font-size:14px;letter-spacing:.16em;text-transform:uppercase;margin:28px 0 8px}</style>

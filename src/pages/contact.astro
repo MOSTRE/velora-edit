@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+---
+<Base title="Contact — VELORA EDIT" description="Contact VELORA EDIT." canonical="https://velora-edit.pages.dev/contact">
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>Contact</p>
+    <h1>Say hello.</h1>
+    <p class="muted">Suggestions, corrections, partnership notes — we read everything.</p>
+    <form data-contact style="max-width:560px;margin-top:24px">
+      <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" required maxlength="80" autocomplete="name" /></div>
+      <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" required autocomplete="email" /></div>
+      <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" name="message" rows="5" required maxlength="2000"></textarea></div>
+      <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Leave empty<input name="company" tabindex="-1" autocomplete="off" /></label></div>
+      <button class="btn" type="submit">Send message</button>
+      <p class="small" data-contact-msg role="status"></p>
+    </form>
+  </div>
+  <SearchOverlay />
+</Base>
+<script>
+  // @ts-nocheck — browser-only form script
+  (function () {
+    var form = document.querySelector('[data-contact]');
+    var msg = document.querySelector('[data-contact-msg]');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fd = new FormData(form);
+      if (fd.get('company')) return; // honeypot
+      var last = Number(localStorage.getItem('velora-contact-at') || 0);
+      if (Date.now() - last < 30000) { msg.textContent = 'Please wait a moment before sending again.'; return; }
+      var name = String(fd.get('name') || '').trim().slice(0, 80);
+      var email = String(fd.get('email') || '').trim();
+      var message = String(fd.get('message') || '').trim().slice(0, 2000);
+      if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !message) { msg.textContent = 'Please complete all fields with a valid email.'; return; }
+      try {
+        var arr = JSON.parse(localStorage.getItem('velora-contact') || '[]');
+        arr.push({ name: name, email: email, message: message, at: new Date().toISOString() });
+        localStorage.setItem('velora-contact', JSON.stringify(arr));
+        localStorage.setItem('velora-contact-at', String(Date.now()));
+      } catch (err) {}
+      msg.textContent = 'Thank you — your message is saved. We will reply by email.';
+      form.reset();
+    });
+  })();
+</script>
+<style>.page{padding:48px 24px 72px}h1{font-size:clamp(42px,6vw,72px);margin:8px 0}</style>

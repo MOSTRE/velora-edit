@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SearchOverlay from '../../components/SearchOverlay.astro';
+import CookieConsent from '../../components/CookieConsent.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { getByCollection, getCollection } from '../../lib/store';
+import { COLLECTIONS } from '../../lib/types';
+
+export async function getStaticPaths() {
+  return COLLECTIONS.map((c) => ({ params: { slug: c.slug } }));
+}
+const { slug } = Astro.params;
+const collection = getCollection(slug as string);
+if (!collection) return Astro.redirect('/404');
+const products = getByCollection(collection.slug);
+---
+<Base
+  title={`${collection.title} — VELORA EDIT`}
+  description={collection.description}
+  canonical={`https://velora-edit.pages.dev/edit/${collection.slug}`}
+  ogImage={collection.image}
+>
+  <Header slot="header" />
+  <Footer slot="footer" />
+  <section class="wrap hero">
+    <p class="eyebrow"><span class="rule"></span>The Edit · {products.length} pieces</p>
+    <h1>{collection.title}</h1>
+    <p class="serif sub">{collection.description}</p>
+    <img src={collection.image} alt={collection.title} width="800" height="600" loading="eager" decoding="async" />
+    <p class="muted editorial">{collection.editorial}</p>
+  </section>
+  <section class="section hairline">
+    <div class="wrap">
+      {products.length === 0 ? (
+        <p>This edit is being restyled — <a href="/edits">browse all edits</a>.</p>
+      ) : (
+        <div class="grid-products">{products.map((p) => <ProductCard product={p} />)}</div>
+      )}
+    </div>
+  </section>
+  <Newsletter />
+  <SearchOverlay />
+  <CookieConsent />
+</Base>
+<script>
+  // @ts-nocheck — browser-only analytics snippet
+  try {
+    var arr = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
+    arr.push({ event: 'collection_view', collection: location.pathname, timestamp: new Date().toISOString(), anonymous_session_id: localStorage.getItem('velora-sid') || 'x', page_url: location.href });
+    localStorage.setItem('velora-events-v1', JSON.stringify(arr.slice(-2000)));
+  } catch (e) {}
+</script>
+<style>
+  .hero { padding: 48px 24px 8px; max-width: 900px; }
+  h1 { font-size: clamp(42px, 6vw, 80px); margin: 8px 0; }
+  .sub { font-size: 22px; color: #3a352e; }
+  .hero img { width: 100%; margin: 28px 0 16px; border: 1px solid var(--line); }
+  .editorial { font-size: 17px; max-width: 640px; }
+</style>

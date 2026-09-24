@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+---
+<Base title="Wishlist — VELORA EDIT" description="Your saved pieces." canonical="https://velora-edit.pages.dev/wishlist" noindex={true}>
+  <Header slot="header" /><Footer slot="footer" />
+  <div class="wrap page">
+    <p class="eyebrow"><span class="rule"></span>Saved</p>
+    <h1>Wishlist.</h1>
+    <p class="muted">Saved on this device only. Tap ♡ on any piece to keep it here.</p>
+    <div data-wish class="grid-products"></div>
+  </div>
+  <SearchOverlay />
+</Base>
+<script>
+  // @ts-nocheck — browser-only wishlist script
+  (async function () {
+    var box = document.querySelector('[data-wish]');
+    var ids = [];
+    try { ids = JSON.parse(localStorage.getItem('velora-wishlist') || '[]'); } catch (e) {}
+    if (!ids.length) { box.innerHTML = '<p>Nothing saved yet — <a href="/edits">explore the edit</a>.</p>'; return; }
+    var idx = await (await fetch('/search-index.json')).json();
+    var items = idx.products.filter(function (p) { return ids.includes(p.id); });
+    box.innerHTML = items.map(function (p) {
+      return '<article class="card"><a href="/product/' + p.slug + '"><div class="pcard-media"><img src="' + p.image + '" alt="' + p.title + '" loading="lazy"/></div><div class="pcard-body"><h3 class="pcard-name">' + p.title + '</h3><span class="price">€' + Number(p.price).toFixed(2) + '</span></div></a></article>';
+    }).join('') || '<p>Saved pieces are no longer in the edit.</p>';
+  })();
+</script>
+<style>.page{padding:48px 24px 72px}h1{font-size:clamp(42px,6vw,76px);margin:8px 0 16px}</style>

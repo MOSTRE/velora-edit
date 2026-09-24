@@ -13,7 +13,7 @@ Production URL:
 https://velora-edit.pages.dev
 
 Preview deployment:
-https://14f1b1cc.velora-edit.pages.dev
+https://33be48df.velora-edit.pages.dev
 
 Branch:
 main
@@ -22,7 +22,7 @@ Build:
 PASS (`npm run build`, 148 static pages, output `dist/`)
 
 Tests:
-PASS (lint 0 issues, typecheck 0 errors, 18/18 tests, seed check 19 products 0 errors)
+PASS (lint 0 issues, typecheck 0 errors, 26/26 tests, seed check 19 products 0 errors)
 
 Products:
 19 verified published · 0 draft · 2 invalid (multi-piece sets, no fitting category) · 29 blocked (retailer anti-bot, no bypass) · 0 duplicates. Evidence: data/import-report.json, data/pending.json (admin-visible).

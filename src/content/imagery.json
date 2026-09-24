@@ -1,0 +1,96 @@
+{
+  "_note": "TEMPORARY development imagery. All entries are placeholder:true — free Unsplash photos used ONLY until approved brand/product photography is supplied. Each entry keeps its credit + source page. To replace imagery, edit this single file.",
+  "license": "Unsplash License (https://unsplash.com/license) — free to use. Photographer credits retained per entry.",
+  "images": {
+    "hero": {
+      "src": "https://images.unsplash.com/photo-1740416649851-e16cff7d4f9a",
+      "alt": "Editorial close-up of gold jewelry worn at the neck and face",
+      "credit": "Planet Volumes",
+      "source_page": "https://unsplash.com/photos/a-close-up-of-a-womans-gold-jewelry--lpL_EoKMyI",
+      "placeholder": true
+    },
+    "campaign": {
+      "src": "https://images.unsplash.com/photo-1633934542430-0905ccb5f050",
+      "alt": "Close-up of hands wearing layered rings and a fine necklace",
+      "credit": "Segal Jewellery",
+      "source_page": "https://unsplash.com/photos/a-close-up-of-a-person-wearing-rings-and-a-necklace-NsH-CvU0deg",
+      "placeholder": true
+    },
+    "detail": {
+      "src": "https://images.unsplash.com/photo-1747933509904-19b33c342fdb",
+      "alt": "Macro detail of a gold necklace clasp",
+      "credit": "Beeds Clothing Jewerly",
+      "source_page": "https://unsplash.com/photos/close-up-of-a-gold-necklace-clasp-r1TGE3tq0hs",
+      "placeholder": true
+    },
+    "founder-sanae": {
+      "src": "https://images.unsplash.com/photo-1762342672674-bc14e52572f4",
+      "alt": "Hands wearing stacked rings — atelier detail, portrait placeholder",
+      "credit": "Zulfugar Karimov",
+      "source_page": "https://unsplash.com/photos/close-up-of-a-womans-hands-wearing-rings-zy6p2ibONaQ",
+      "placeholder": true
+    },
+    "founder-salma": {
+      "src": "https://images.unsplash.com/photo-1677316731904-76a97b6d73b6",
+      "alt": "Hand wearing a single sculptural ring — atelier detail, portrait placeholder",
+      "credit": "Ouroboros Ring",
+      "source_page": "https://unsplash.com/photos/a-close-up-of-a-persons-hand-with-a-ring-on-it-178i78L8FKM",
+      "placeholder": true
+    },
+    "journal-stack": {
+      "src": "https://images.unsplash.com/photo-1650453943832-dc4d8e26acd5",
+      "alt": "Gold necklace arranged on a plate, mirror reflection",
+      "credit": "AlteroMetais",
+      "source_page": "https://unsplash.com/photos/a-close-up-of-a-gold-necklace-on-a-plate-JhtiV2zsHHY",
+      "placeholder": true
+    },
+    "journal-five": {
+      "src": "https://images.unsplash.com/photo-1720729823936-185a87978043",
+      "alt": "Necklace and earring set arranged on white fabric",
+      "credit": "Diego Castañeda",
+      "source_page": "https://unsplash.com/photos/a-necklace-and-earring-set-on-a-white-sheet-mPgNho2PJ60",
+      "placeholder": true
+    },
+    "journal-value": {
+      "src": "https://images.unsplash.com/photo-1658915250017-bee8f8f0d9a6",
+      "alt": "Earrings resting on a white plate in soft light",
+      "credit": "Photo via Unsplash",
+      "source_page": "https://unsplash.com/photos/a-pair-of-earrings-on-a-white-plate-EbKFg9wDcXw",
+      "placeholder": true
+    },
+    "journal-him": {
+      "src": "https://images.unsplash.com/photo-1632525230528-ec17c49bc168",
+      "alt": "Gold earrings on a pale surface, minimal still life",
+      "credit": "Photo via Unsplash",
+      "source_page": "https://unsplash.com/photos/a-pair-of-gold-earrings-on-a-white-surface-DRbPrVTyTyA",
+      "placeholder": true
+    },
+    "journal-goldtone": {
+      "src": "https://images.unsplash.com/photo-1758995115518-26f90aa61b97",
+      "alt": "Gold beaded necklace on deep blue velvet",
+      "credit": "Photo via Unsplash",
+      "source_page": "https://unsplash.com/photos/gold-necklace-with-intricate-bead-details-on-blue-velvet-u1DhoJNcmqM",
+      "placeholder": true
+    }
+  },
+  "collections": {
+    "new-arrivals": "campaign",
+    "quiet-luxury": "detail",
+    "under-20": "journal-value",
+    "minimal-essentials": "journal-stack",
+    "gold-edit": "hero",
+    "silver-edit": "journal-him",
+    "for-him": "founder-salma",
+    "for-her": "campaign",
+    "unisex": "founder-sanae",
+    "statement": "hero",
+    "best-value": "journal-five",
+    "gift-edit": "journal-five",
+    "signature": "campaign",
+    "minimal-gold": "hero",
+    "silver-essentials": "journal-him",
+    "everyday": "journal-stack",
+    "date-night": "journal-goldtone",
+    "new-finds": "campaign"
+  }
+}

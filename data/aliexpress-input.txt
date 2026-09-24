@@ -1,0 +1,13 @@
+# VELORA EDIT — real AliExpress product URLs (approved affiliate program)
+#
+# Paste EXACTLY 50 real AliExpress product URLs below, one per line.
+# Empty lines and lines starting with # are ignored.
+# Duplicates are removed automatically and reported by the importer.
+#
+# DO NOT invent URLs. Only URLs obtained from the approved affiliate
+# program are accepted. Run validation with:
+#
+#   node scripts/import-aliexpress.mjs --check
+#
+# --- paste URLs below this line ---
+

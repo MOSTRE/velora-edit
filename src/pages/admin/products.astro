@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { getPublishedProducts } from '../../lib/store';
 const products = getPublishedProducts();
-const json = JSON.stringify(products.map((p) => ({ id: p.id, slug: p.slug, title: p.title, price: p.price, status: p.status, affiliate: p.affiliate_url, score: p.editorial_score })));
+const json = JSON.stringify(products.map((p) => ({ id: p.id, slug: p.slug, title: p.title, category: p.category, price: p.price, status: p.status, affiliate: p.affiliate_url, image: p.thumbnail_url, published: p.is_published, checked: p.price_checked_at || p.price_freshness || p.updated_at, source: p.source_name || (p.demo ? 'demo' : ''), score: p.editorial_score })));
 ---
 <Base title="Admin · Products — VELORA EDIT" noindex={true}>
   <div class="wrap admin">
@@ -15,7 +15,7 @@ const json = JSON.stringify(products.map((p) => ({ id: p.id, slug: p.slug, title
       <button class="btn" data-new>New product</button>
     </div>
     <p class="tiny muted">Preview before publishing. Local edits save as drafts on this device — export JSON and commit to publish (production: Supabase).</p>
-    <table class="table"><thead><tr><th>Title</th><th>Price</th><th>Status</th><th>Score</th><th>Affiliate</th><th></th></tr></thead><tbody data-rows></tbody></table>
+    <table class="table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Affiliate status</th><th>Image status</th><th>Published</th><th>Last checked</th><th>Source</th><th></th></tr></thead><tbody data-rows></tbody></table>
 
     <dialog data-editor>
       <form method="dialog" data-form>
@@ -28,7 +28,7 @@ const json = JSON.stringify(products.map((p) => ({ id: p.id, slug: p.slug, title
           <div class="field"><label>Affiliate URL (required to publish)</label><input name="affiliate_url" type="url" placeholder="https://…" /></div>
           <div class="field"><label>Image URL</label><input name="image" /></div>
           <div class="field"><label>Material (only if verified)</label><input name="material" /></div>
-          <div class="field"><label>Status</label><select name="status"><option>DRAFT</option><option>REVIEW</option><option>PUBLISHED</option><option>ARCHIVED</option></select></div>
+          <div class="field"><label>Status</label><select name="status"><option>DRAFT</option><option>REVIEW</option><option>VERIFIED</option><option>PUBLISHED</option><option>ARCHIVED</option><option>INVALID</option></select></div>
         </div>
         <div class="field"><label>Description (min 40 chars)</label><textarea name="description" rows="3"></textarea></div>
         <div class="field"><label>Editor note</label><textarea name="editor_note" rows="2"></textarea></div>
@@ -63,8 +63,10 @@ const json = JSON.stringify(products.map((p) => ({ id: p.id, slug: p.slug, title
         rows.innerHTML = all().filter(function (p) {
           return (p.title + p.slug).toLowerCase().includes(term);
         }).map(function (p) {
-          var ok = !!p.affiliate;
-          return '<tr><td><strong>' + p.title + '</strong><br><small class="muted">' + p.slug + '</small></td><td>€' + Number(p.price || 0).toFixed(2) + '</td><td>' + p.status + '</td><td>' + (p.score ?? '—') + '</td><td>' + (ok ? '✓' : '<b style="color:#a33">missing — cannot publish</b>') + '</td><td><button data-edit="' + p.slug + '">Edit</button></td></tr>';
+          var affOk = !!p.affiliate;
+          var imgOk = !!p.image;
+          var checked = (p.checked || '').slice(0, 10);
+          return '<tr><td><strong>' + p.title + '</strong><br><small class="muted">' + p.slug + ' · ' + p.status + '</small></td><td>' + (p.category || '—') + '</td><td>€' + Number(p.price || 0).toFixed(2) + '</td><td>' + (affOk ? '✓ verified' : '<b style="color:#a33">missing</b>') + '</td><td>' + (imgOk ? '✓ present' : '<b style="color:#a33">IMAGE_REQUIRED</b>') + '</td><td>' + (p.published ? 'yes' : 'no') + '</td><td><small>' + checked + '</small></td><td><small>' + (p.source || '—') + '</small></td><td><button data-edit="' + p.slug + '">Edit</button></td></tr>';
         }).join('');
       }
       q.addEventListener('input', draw); draw();

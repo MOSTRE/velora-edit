@@ -1,110 +1,75 @@
 ---
-/* Site chrome: announcement + header with mega-menu. Used via slots in Base. */
+/* Minimal fashion navigation: SHOP / EDIT / JOURNAL / FOUNDERS + SEARCH / WISHLIST */
 ---
 <div class="announce" slot="announce">
-  New Arrivals are live — <a href="/edit/new-arrivals">explore the selection</a>
+  N°01 — The Everyday Edit · <a href="/edit/new-arrivals">Explore</a>
 </div>
 
 <header data-header slot="header">
   <div class="wrap bar">
-    <button class="iconbtn only-mobile" data-menu-open aria-label="Open menu" aria-expanded="false">☰</button>
-    <a class="logo" href="/" aria-label="VELORA EDIT home">VELORA&nbsp;EDIT</a>
+    <a class="logo" href="/" aria-label="VELORA EDIT home">VELORA EDIT</a>
     <nav class="desk" aria-label="Primary">
-      <div class="mega">
-        <a class="navlink toplink" href="/jewelry" aria-haspopup="true">Jewelry</a>
-        <div class="panel" role="menu" aria-label="Jewelry categories">
-          <a href="/jewelry/rings"><strong>Rings</strong><small>Signets, bands & stacks</small></a>
-          <a href="/jewelry/necklaces"><strong>Necklaces</strong><small>Pendants & layers</small></a>
-          <a href="/jewelry/bracelets"><strong>Bracelets</strong><small>Cuffs & bangles</small></a>
-          <a href="/jewelry/earrings"><strong>Earrings</strong><small>Studs, hoops & drops</small></a>
-          <a href="/jewelry/chains"><strong>Chains</strong><small>The foundation</small></a>
-        </div>
-      </div>
-      <div class="mega">
-        <a class="navlink toplink" href="/edits" aria-haspopup="true">Edits</a>
-        <div class="panel" role="menu" aria-label="Editorial edits">
-          <a href="/edit/under-20"><strong>Under €20</strong><small>Beautiful, not excessive</small></a>
-          <a href="/edit/quiet-luxury"><strong>Quiet Luxury</strong><small>No logos, no noise</small></a>
-          <a href="/edit/gold-edit"><strong>Gold Edit</strong><small>Warm essentials</small></a>
-          <a href="/edit/silver-edit"><strong>Silver Edit</strong><small>Cool staples</small></a>
-          <a href="/edit/for-him"><strong>For Him</strong><small>Weight & presence</small></a>
-          <a href="/edit/for-her"><strong>For Her</strong><small>Soft finish</small></a>
-        </div>
-      </div>
-      <a class="navlink toplink" href="/journal">Journal</a>
-      <a class="navlink toplink" href="/about">About</a>
-      <a class="navlink toplink" href="/founders">Founders</a>
+      <a class="navlink" href="/jewelry">Shop</a>
+      <a class="navlink" href="/edits">Edit</a>
+      <a class="navlink" href="/journal">Journal</a>
+      <a class="navlink" href="/founders">Founders</a>
     </nav>
     <div class="actions">
-      <button class="iconbtn" data-search-open aria-label="Search">⌕</button>
-      <a class="iconbtn" href="/wishlist" aria-label="Wishlist">♡</a>
+      <button class="navlink btn-plain" data-search-open aria-label="Search">Search</button>
+      <a class="navlink" href="/wishlist" aria-label="Wishlist">Wishlist</a>
+      <button class="iconbtn only-mobile" data-menu-open aria-label="Open menu" aria-expanded="false">☰</button>
     </div>
-  </div>
-  <div class="mobilemenu" data-menu hidden>
-    <nav aria-label="Mobile">
-      <p class="eyebrow">Jewelry</p>
-      <a href="/jewelry/rings">Rings</a>
-      <a href="/jewelry/necklaces">Necklaces</a>
-      <a href="/jewelry/bracelets">Bracelets</a>
-      <a href="/jewelry/earrings">Earrings</a>
-      <a href="/jewelry/chains">Chains</a>
-      <p class="eyebrow">Edits</p>
-      <a href="/edit/new-arrivals">New Arrivals</a>
-      <a href="/edit/under-20">Under €20</a>
-      <a href="/edit/quiet-luxury">Quiet Luxury</a>
-      <a href="/edit/for-him">For Him</a>
-      <a href="/edit/for-her">For Her</a>
-      <p class="eyebrow">More</p>
-      <a href="/journal">Journal</a>
-      <a href="/about">About</a>
-      <a href="/founders">Founders</a>
-      <a href="/contact">Contact</a>
-    </nav>
   </div>
 </header>
 
+<div class="fsmenu" data-menu hidden role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="wrap fs-top">
+    <span class="logo">VELORA EDIT</span>
+    <button class="iconbtn" data-menu-close aria-label="Close menu">✕</button>
+  </div>
+  <nav class="wrap fs-links" aria-label="Mobile">
+    <a href="/jewelry">Shop</a>
+    <a href="/edits">Edit</a>
+    <a href="/journal">Journal</a>
+    <a href="/founders">Founders</a>
+    <a href="/wishlist">Wishlist</a>
+  </nav>
+  <p class="wrap tiny muted">Curated jewelry · Nothing excessive.</p>
+</div>
+
 <style>
-  .bar { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
-  .logo { font-family: var(--serif); font-size: 22px; letter-spacing: 0.28em; font-weight: 600; }
-  .desk { display: flex; gap: 30px; align-items: center; }
-  .toplink { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: #2a2723; padding: 10px 0; }
-  .mega { position: relative; }
-  .panel {
-    position: absolute; top: 100%; left: 50%; transform: translate(-50%, 8px);
-    min-width: 300px; background: #fff; border: 1px solid var(--line);
-    box-shadow: 0 24px 60px rgba(17,17,17,0.12); padding: 10px;
-    opacity: 0; visibility: hidden; transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
-  }
-  .mega:hover .panel, .mega:focus-within .panel { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
-  .panel a { display: grid; gap: 2px; padding: 12px 14px; transition: background 0.2s ease; }
-  .panel a:hover { background: var(--bg); }
-  .panel strong { font-family: var(--serif); font-size: 19px; font-weight: 500; }
-  .panel small { color: var(--muted); font-size: 12px; }
-  .actions { display: flex; gap: 6px; align-items: center; }
-  .iconbtn { background: none; border: 0; font-size: 20px; cursor: pointer; padding: 8px 10px; color: #111; text-decoration: none; }
+  .bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 72px; gap: 16px; }
+  .logo { font-family: var(--serif); font-size: 20px; letter-spacing: 0.3em; font-weight: 600; justify-self: start; }
+  .desk { display: flex; gap: 34px; justify-self: center; }
+  .actions { display: flex; gap: 26px; align-items: center; justify-self: end; }
+  .btn-plain { background: none; border: 0; cursor: pointer; color: inherit; font: inherit; }
+  .iconbtn { background: none; border: 0; font-size: 20px; cursor: pointer; padding: 8px; color: inherit; }
   .only-mobile { display: none; }
-  .mobilemenu { border-top: 1px solid var(--line); background: var(--bg); padding: 12px 24px 24px; max-height: 70vh; overflow-y: auto; }
-  .mobilemenu .eyebrow { margin: 16px 0 2px; }
-  .mobilemenu nav { display: grid; gap: 2px; }
-  .mobilemenu nav > a { padding: 11px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
+  .fsmenu { position: fixed; inset: 0; z-index: 400; background: var(--bg); display: flex; flex-direction: column; padding: 0 0 40px; }
+  .fsmenu[hidden] { display: none; }
+  .fs-top { display: flex; justify-content: space-between; align-items: center; height: 72px; width: 100%; }
+  .fs-links { display: grid; gap: 6px; margin-top: 8vh; }
+  .fs-links a { font-family: var(--serif); font-size: clamp(40px, 9vw, 72px); line-height: 1.1; transition: opacity 0.25s ease, transform 0.4s var(--ease); }
+  .fs-links a:hover { opacity: 0.55; }
   @media (max-width: 900px) {
-    .desk { display: none; }
+    .desk, .actions .navlink { display: none; }
     .only-mobile { display: block; }
-    .logo { font-size: 18px; }
+    .bar { grid-template-columns: 1fr auto; }
+    .logo { font-size: 17px; }
+    .actions { gap: 8px; }
   }
 </style>
 
 <script>
-  // @ts-nocheck — browser-only chrome script
+  // @ts-nocheck — browser-only menu script
   (function () {
     var open = document.querySelector('[data-menu-open]');
+    var close = document.querySelector('[data-menu-close]');
     var menu = document.querySelector('[data-menu]');
-    if (open && menu) {
-      open.addEventListener('click', function () {
-        var hidden = menu.hasAttribute('hidden');
-        if (hidden) { menu.removeAttribute('hidden'); open.setAttribute('aria-expanded', 'true'); }
-        else { menu.setAttribute('hidden', ''); open.setAttribute('aria-expanded', 'false'); }
-      });
-    }
+    function show() { menu.removeAttribute('hidden'); document.body.style.overflow = 'hidden'; if (open) open.setAttribute('aria-expanded', 'true'); }
+    function hide() { menu.setAttribute('hidden', ''); document.body.style.overflow = ''; if (open) open.setAttribute('aria-expanded', 'false'); }
+    if (open) open.addEventListener('click', show);
+    if (close) close.addEventListener('click', hide);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hasAttribute('hidden')) hide(); });
   })();
 </script>

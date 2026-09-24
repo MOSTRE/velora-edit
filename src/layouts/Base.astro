@@ -43,7 +43,7 @@ const og = ogImage.startsWith('http') ? ogImage : site + ogImage;
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={og} />
-  <meta name="theme-color" content="#F7F5F0" />
+  <meta name="theme-color" content="#F5F3EE" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -75,9 +75,9 @@ const og = ogImage.startsWith('http') ? ogImage : site + ogImage;
             if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
           });
         }, { threshold: 0.12 });
-        document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+        document.querySelectorAll('.reveal, .img-zoom').forEach(function (el) { io.observe(el); });
       } else {
-        document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+        document.querySelectorAll('.reveal, .img-zoom').forEach(function (el) { el.classList.add('in'); });
       }
       // Wishlist toggles (device-local, works for every product card site-wide).
       function wishIds() { try { return JSON.parse(localStorage.getItem('velora-wishlist') || '[]'); } catch (e) { return []; } }
@@ -130,6 +130,6 @@ const og = ogImage.startsWith('http') ? ogImage : site + ogImage;
 </html>
 
 <style>
-  [data-header] { position: sticky; top: 0; z-index: 100; background: rgba(247,245,240,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: box-shadow .25s ease, border-color .25s ease; border-bottom: 1px solid transparent; }
+  [data-header] { position: sticky; top: 0; z-index: 100; background: rgba(245,243,238,0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: box-shadow .25s ease, border-color .25s ease; border-bottom: 1px solid transparent; }
   [data-header][data-scrolled] { border-bottom-color: var(--line); box-shadow: 0 8px 24px rgba(17,17,17,.06); }
 </style>

@@ -1,28 +1,26 @@
 ---
-import { formatPrice, badgesFor, type Product } from '../lib/types';
+import { formatPrice, type Product } from '../lib/types';
 interface Props { product: Product; eager?: boolean; index?: number }
 const { product: p, eager = false, index = 0 } = Astro.props;
-const badges = badgesFor(p).slice(0, 2);
 const alt = p.image_urls[1] || p.image_urls[0];
-const num = p.id.replace('seed-', '');
 const stagger = index % 3 === 1 ? 'reveal-d1' : index % 3 === 2 ? 'reveal-d2' : '';
+// Quiet markers only — no pill badges.
+const flag = p.is_limited ? 'Limited edit' : p.is_new ? 'New' : p.editor_pick ? "Editor's pick" : p.is_best_value ? 'Best value' : '';
 ---
 <article class={`pcard reveal ${stagger}`} data-card>
   <a href={`/product/${p.slug}`} aria-label={`${p.title} — view piece`} data-product-link={p.slug}>
     <div class="pcard-media">
       <img class="main" src={p.thumbnail_url} alt={p.title} loading={eager ? 'eager' : 'lazy'} decoding="async" width="400" height="520" />
       {alt && alt !== p.thumbnail_url && <img class="alt" src={alt} alt="" aria-hidden="true" loading="lazy" decoding="async" width="400" height="520" />}
-      {badges.length > 0 && <span class="badge pcard-badge">{badges[0]}</span>}
-      <span class="pcard-view" aria-hidden="true">View piece</span>
+      <span class="pcard-arrow" aria-hidden="true">→</span>
     </div>
   </a>
-  <button class="pcard-wish" data-wish={p.id} aria-pressed="false" aria-label={`Save ${p.title} to wishlist`}>♡</button>
   <div class="pcard-body">
-    <div class="pcard-cat">{p.category} · {p.gender === 'unisex' ? 'Unisex' : p.gender === 'men' ? "Men's" : "Women's"}</div>
+    <div class="pcard-cat">{p.category}</div>
     <a href={`/product/${p.slug}`}><h3 class="pcard-name">{p.title}</h3></a>
     <div class="pcard-meta">
       <span class="price">{formatPrice(p)}</span>
-      <span class="pcard-num">N°{num}</span>
     </div>
+    {flag && <div class="pcard-flag">{flag}</div>}
   </div>
 </article>

@@ -6,185 +6,145 @@ import ProductCard from '../components/ProductCard.astro';
 import SearchOverlay from '../components/SearchOverlay.astro';
 import Newsletter from '../components/Newsletter.astro';
 import CookieConsent from '../components/CookieConsent.astro';
-import { getPublishedProducts, getByCollection, getArticles, getFounders } from '../lib/store';
+import { getPublishedProducts, getArticles, getFounders } from '../lib/store';
+import { editorialImage } from '../lib/images';
 import { orgJsonLd } from '../lib/seo';
 
 const products = getPublishedProducts();
-const fresh = products.filter((p) => p.is_new).slice(0, 8);
-const quiet = getByCollection('quiet-luxury').slice(0, 8);
-const under20 = getByCollection('under-20').slice(0, 8);
-const signature = products.filter((p) => p.is_featured).slice(0, 8);
-const picks = products.filter((p) => p.editor_pick).slice(0, 8);
-const forHim = getByCollection('for-him').slice(0, 8);
-const forHer = getByCollection('for-her').slice(0, 8);
+const featured = products.filter((p) => p.is_featured).slice(0, 6);
+const picks = products.filter((p) => p.editor_pick).slice(0, 6);
 const articles = getArticles().slice(0, 3);
 const founders = getFounders();
+const hero = editorialImage('hero', 2000);
+const campaign = editorialImage('campaign', 1600);
+const detail = editorialImage('detail', 1600);
+const [lead, ...rest] = articles;
 ---
 <Base
   title="VELORA EDIT — Jewelry Worth Discovering"
-  description="Curated pieces for a quieter kind of luxury. Rings, necklaces, bracelets, earrings and chains — including New Arrivals and the Under €20 Edit."
+  description="Curated pieces for a quieter kind of luxury. New arrivals, the signature edit, founders' notes and journal guides."
   canonical="https://velora-edit.pages.dev/"
-  ogImage="/images/hero-wide.svg"
+  ogImage={hero.url}
   jsonLd={[orgJsonLd()]}
 >
-  <link slot="head" rel="preload" as="image" href="/images/hero-wide.svg" fetchpriority="high" />
+  <link slot="head" rel="preload" as="image" href={hero.url} fetchpriority="high" />
   <Header slot="header" />
   <Footer slot="footer" />
 
   <!-- 01 · HERO -->
   <section class="hero">
     <div class="hero-media" aria-hidden="true">
-      <img class="hero-drift" src="/images/hero-wide.svg" alt="" width="1600" height="900" fetchpriority="high" decoding="async" />
+      <img src={hero.url} alt="" width="2000" height="1333" fetchpriority="high" decoding="async" data-parallax="0.1" />
     </div>
     <div class="wrap hero-copy">
-      <p class="eyebrow light reveal"><span class="rule"></span>N°01 — The new edit is live</p>
-      <h1 class="reveal">Jewelry worth<br />discovering.</h1>
-      <p class="sub reveal reveal-d1">Curated pieces for a quieter kind of luxury.</p>
-      <div class="cta reveal reveal-d2">
-        <a class="btn" href="/edits">Explore the Edit</a>
-        <a class="btn btn-ghost light-btn" href="/edit/new-arrivals">New arrivals</a>
-      </div>
+      <p class="label light reveal">N°01 — The Everyday Edit</p>
+      <h1 class="display reveal">Jewelry that<br />stays with you.</h1>
+      <p class="reveal reveal-d1"><a class="tlink light" href="/edits">Explore the edit →</a></p>
     </div>
-    <a class="hero-scroll" href="#new-edit" aria-label="Scroll to new arrivals">↓</a>
   </section>
 
-  <!-- 02 · THE NEW EDIT -->
-  <section class="section" id="new-edit">
+  <!-- 02 · FEATURED CAMPAIGN -->
+  <section class="section">
+    <div class="wrap campaign">
+      <div class="camp-media img-zoom reveal">
+        <img src={campaign.url} alt={campaign.alt} width="1600" height="1067" loading="eager" decoding="async" />
+      </div>
+      <div class="camp-copy reveal reveal-d1">
+        <p class="label"><span class="rule"></span>The New Edit</p>
+        <h2 class="h-lg">Pieces selected for proportion, texture and the way they change in motion.</h2>
+        <p><a class="tlink" href="/edit/new-arrivals">Discover →</a></p>
+        <p class="caption">Photography: {campaign.credit} (temporary placeholder imagery).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · SHOP THE EDIT -->
+  <section class="section-tight">
     <div class="wrap">
-      <div class="head reveal">
-        <div>
-          <p class="eyebrow"><span class="rule"></span>02 — The new edit</p>
-          <h2>Just landed.</h2>
-          <p class="muted">Eight arrivals, chosen for proportion, finish and everyday wear.</p>
-        </div>
-        <a class="btn btn-ghost" href="/edit/new-arrivals">View all</a>
+      <div class="sechead reveal">
+        <p class="label"><span class="rule"></span>Shop the edit</p>
+        <h2 class="h-xl">The Edit</h2>
+        <p class="muted lede">A small selection worth stopping for.</p>
+      </div>
+      <div class="grid-asym">
+        {featured.map((p, i) => <ProductCard product={p} index={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · EDITORIAL STORY -->
+  <section class="section story">
+    <div class="wrap story-grid">
+      <div class="reveal">
+        <p class="label"><span class="rule"></span>The Detail</p>
+        <h2 class="h-lg">Luxury is a clasp that closes cleanly.</h2>
+        <p class="muted body">We look closely at the parts nobody photographs: the hinge, the edge, the weight of a link. If the detail is right, the piece earns its place.</p>
+        <p><a class="tlink" href="/journal/affordable-look-expensive">Read the guide →</a></p>
+      </div>
+      <div class="img-zoom reveal reveal-d1">
+        <img src={detail.url} alt={detail.alt} width="1600" height="1067" loading="lazy" decoding="async" data-parallax="0.05" />
+        <p class="caption">Photography: {detail.credit} (temporary placeholder imagery).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · CURATED PRODUCTS -->
+  <section class="section-tight">
+    <div class="wrap">
+      <div class="sechead reveal">
+        <p class="label"><span class="rule"></span>Curated</p>
+        <h2 class="h-xl">Editor's picks</h2>
       </div>
       <div class="grid-products">
-        {fresh.map((p, i) => <ProductCard product={p} index={i} />)}
+        {picks.map((p, i) => <ProductCard product={p} index={i} />)}
       </div>
+      <p class="more-row reveal"><a class="tlink" href="/edit/under-20">Under €20 →</a> <a class="tlink" href="/edit/quiet-luxury">Quiet Luxury →</a></p>
     </div>
   </section>
 
-  <!-- 03 · QUIET LUXURY -->
-  <section class="section-tight hairline">
-    <div class="wrap">
-      <div class="head reveal">
-        <div>
-          <p class="eyebrow"><span class="rule"></span>03 — Quiet luxury</p>
-          <h2>No logos. No noise.</h2>
-        </div>
-        <a class="tiny viewlink" href="/edit/quiet-luxury">View the edit →</a>
-      </div>
-      <div class="grid-products">{quiet.map((p) => <ProductCard product={p} />)}</div>
-    </div>
-  </section>
-
-  <!-- 04 · UNDER €20 -->
-  <section class="band">
-    <div class="wrap">
-      <div class="head reveal">
-        <div>
-          <p class="eyebrow gold"><span class="rule"></span>04 — Under €20</p>
-          <h2>Beautiful doesn’t have to be excessive.</h2>
-        </div>
-        <a class="btn btn-ghost" href="/edit/under-20">View the edit</a>
-      </div>
-      <div class="grid-products">{under20.map((p) => <ProductCard product={p} />)}</div>
-    </div>
-  </section>
-
-  <!-- 05 · SIGNATURE COLLECTION -->
-  <section class="section">
-    <div class="wrap split reveal">
-      <div>
-        <p class="eyebrow"><span class="rule"></span>05 — The signature collection</p>
-        <h2>The definitive<br />selection.</h2>
-        <p class="muted">If we could only keep a handful of pieces, it would be these — the silhouettes that define VELORA EDIT.</p>
-        <a class="btn btn-ghost" href="/edit/signature">Explore signatures</a>
-      </div>
-      <div class="sig-grid">
-        {signature.slice(0, 4).map((p) => <ProductCard product={p} />)}
-      </div>
-    </div>
-    <div class="wrap"><div class="grid-products" style="margin-top:20px">{signature.slice(4, 8).map((p) => <ProductCard product={p} />)}</div></div>
-  </section>
-
-  <!-- 06 · EDITOR'S PICKS -->
-  <section class="section-tight hairline">
-    <div class="wrap">
-      <div class="head reveal">
-        <div>
-          <p class="eyebrow"><span class="rule"></span>06 — Editor’s picks</p>
-          <h2>Chosen, not listed.</h2>
-        </div>
-        <a class="tiny viewlink" href="/edits">All edits →</a>
-      </div>
-      <div class="grid-products">{picks.map((p) => <ProductCard product={p} />)}</div>
-    </div>
-  </section>
-
-  <!-- 07 · FOR HIM / 08 · FOR HER -->
-  <section class="duet">
-    <div class="wrap duet-grid">
-      <div class="reveal">
-        <img src="/images/edit-him.svg" alt="Editorial image for jewelry for him" loading="lazy" width="800" height="600" data-parallax="0.06" />
-        <p class="eyebrow" style="margin-top:16px"><span class="rule"></span>07 — For him</p>
-        <h2>Weight & presence.</h2>
-        <div class="mini-grid">{forHim.slice(0, 4).map((p) => <ProductCard product={p} />)}</div>
-        <p><a class="tiny viewlink" href="/edit/for-him">Shop For Him →</a></p>
+  <!-- 06 · FOUNDERS (compact) -->
+  <section class="section founders">
+    <div class="wrap f-grid">
+      <div class="f-collage reveal">
+        {founders.map((f) => (
+          <img src={(f.id === 'sanae' ? editorialImage('founder-sanae', 800) : editorialImage('founder-salma', 800)).url} alt={`Atelier detail — portrait placeholder for ${f.name}`} width="800" height="1000" loading="lazy" decoding="async" />
+        ))}
       </div>
       <div class="reveal reveal-d1">
-        <img src="/images/edit-her.svg" alt="Editorial image for jewelry for her" loading="lazy" width="800" height="600" data-parallax="0.06" />
-        <p class="eyebrow" style="margin-top:16px"><span class="rule"></span>08 — For her</p>
-        <h2>Soft finish.</h2>
-        <div class="mini-grid">{forHer.slice(0, 4).map((p) => <ProductCard product={p} />)}</div>
-        <p><a class="tiny viewlink" href="/edit/for-her">Shop For Her →</a></p>
+        <p class="label"><span class="rule"></span>The Founders</p>
+        <h2 class="h-lg">Two perspectives. One edit.</h2>
+        <p class="muted body">Sanae and Salma built VELORA EDIT around considered, personal pieces — without the noise.</p>
+        <p><a class="tlink" href="/founders">Meet Sanae & Salma →</a></p>
       </div>
     </div>
   </section>
 
-  <!-- 09 · FOUNDERS -->
-  <section class="founders">
+  <!-- 07 · JOURNAL -->
+  <section class="section-tight">
     <div class="wrap">
-      <div class="head reveal">
-        <div>
-          <p class="eyebrow"><span class="rule"></span>09 — The founders</p>
-          <h2>Two perspectives.</h2>
-          <p class="muted">Sanae and Salma created VELORA EDIT around a simple idea: finding jewelry that feels considered, personal and beautifully made without unnecessary noise.</p>
-        </div>
-        <a class="btn btn-ghost" href="/founders">Meet the founders</a>
+      <div class="sechead reveal">
+        <p class="label"><span class="rule"></span>Journal</p>
+        <h2 class="h-xl">Notes</h2>
       </div>
-      <div class="f-grid">
-        {founders.map((f) => (
-          <a class="f-card reveal" href="/founders">
-            <div class="f-media"><img src={f.portrait} alt={`Portrait placeholder for ${f.name}`} loading="lazy" width="600" height="760" /></div>
-            <p class="eyebrow">{f.role}</p>
-            <h3>{f.name}</h3>
-            <p class="serif quote">“{f.quote}”</p>
+      {lead && (
+        <a class="j-lead reveal" href={`/journal/${lead.slug}`}>
+          <div class="card-img"><img src={lead.image} alt={lead.title} loading="lazy" width="1600" height="900" /></div>
+          <div class="j-lead-body">
+            <p class="tiny muted">{lead.read_minutes} min read</p>
+            <h3 class="h-md">{lead.title}</h3>
+            <p class="muted">{lead.excerpt}</p>
+          </div>
+        </a>
+      )}
+      <div class="grid-2 j-rest">
+        {rest.map((a) => (
+          <a class="card reveal" href={`/journal/${a.slug}`}>
+            <div class="card-img" style="aspect-ratio:16/10"><img src={a.image} alt={a.title} loading="lazy" width="800" height="500" /></div>
+            <div style="padding:18px 0"><p class="tiny muted">{a.read_minutes} min read</p><h3 class="serif" style="font-size:24px;margin:6px 0">{a.title}</h3></div>
           </a>
         ))}
       </div>
-    </div>
-  </section>
-
-  <!-- 10 · JOURNAL -->
-  <section class="section hairline">
-    <div class="wrap">
-      <div class="head reveal">
-        <div>
-          <p class="eyebrow"><span class="rule"></span>10 — The journal</p>
-          <h2>Notes on wearing it well.</h2>
-        </div>
-        <a class="tiny viewlink" href="/journal">All articles →</a>
-      </div>
-      <div class="grid-3">
-        {articles.map((a) => (
-          <a class="card jcard reveal" href={`/journal/${a.slug}`}>
-            <div class="jmedia"><img src={a.image} alt={a.title} loading="lazy" width="800" height="500" /></div>
-            <div class="jbody"><p class="tiny muted">{a.read_minutes} min read</p><h3 class="serif">{a.title}</h3><p class="small muted">{a.excerpt}</p></div>
-          </a>
-        ))}
-      </div>
+      <p class="more-row reveal"><a class="tlink" href="/journal">View journal →</a></p>
     </div>
   </section>
 
@@ -194,55 +154,36 @@ const founders = getFounders();
 </Base>
 
 <style>
-  .hero { position: relative; min-height: 92vh; display: flex; align-items: end; overflow: hidden; background: #141210; }
-  .hero-media { position: absolute; inset: 0; overflow: hidden; }
-  .hero-media img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
-  .hero::after { content: ""; position: absolute; inset: 0; background: rgba(17,17,17,0.32); }
-  .hero-copy { position: relative; z-index: 2; padding: 0 24px 96px; color: #f7f5f0; }
-  .hero-copy h1 { font-size: clamp(56px, 9vw, 128px); color: #fff; }
-  .eyebrow.light { color: #d8d2c6; }
-  .sub { font-family: var(--serif); font-size: clamp(20px, 2.6vw, 28px); color: #e9e2d4; margin: 14px 0 26px; font-style: italic; }
-  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
-  .light-btn { border-color: #f7f5f0; color: #fff; }
-  .light-btn:hover { background: #f7f5f0; color: #111; }
-  .hero-scroll { position: absolute; z-index: 2; right: 28px; bottom: 28px; color: #fff; font-size: 22px; border: 1px solid rgba(255,255,255,0.5); width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-  h2 { font-size: clamp(30px, 4vw, 50px); margin: 8px 0; }
-  .viewlink { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
-  .eyebrow.gold { color: var(--gold); }
-  .band { background: #111; color: #f7f5f0; padding: 72px 0; }
-  .band h2 { color: #f7f5f0; }
-  .band .muted { color: #b9b2a6; }
-  .band .btn-ghost { border-color: #f7f5f0; color: #f7f5f0; }
-  .band .btn-ghost:hover { background: #f7f5f0; color: #111; }
-  .split { display: grid; grid-template-columns: 0.9fr 1.4fr; gap: 40px; align-items: start; }
-  .sig-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .duet { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 72px 0; }
-  .duet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-  .duet-grid img { width: 100%; border: 1px solid var(--line); }
-  .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
-  .founders { background: #111; color: #f7f5f0; padding: 80px 0; }
-  .founders h2 { color: #fff; }
-  .founders .muted { color: #b9b2a6; max-width: 560px; }
-  .founders .btn-ghost { border-color: #f7f5f0; color: #fff; }
-  .founders .btn-ghost:hover { background: #f7f5f0; color: #111; }
-  .f-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
-  .f-card { display: block; }
-  .f-media { overflow: hidden; border: 1px solid #2c2823; }
-  .f-media img { width: 100%; transition: transform 1s cubic-bezier(0.22,1,0.36,1); }
-  .f-card:hover .f-media img { transform: scale(1.03); }
-  .f-card h3 { font-size: 34px; letter-spacing: 0.2em; color: #fff; margin: 8px 0; }
-  .f-card .quote { font-size: 20px; font-style: italic; color: #d8d2c6; }
-  .f-card .eyebrow { color: #a89e8d; margin-top: 18px; }
-  .jcard { text-decoration: none; }
-  .jmedia { aspect-ratio: 16/10; overflow: hidden; background: #e9e2d4; }
-  .jmedia img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
-  .jcard:hover .jmedia img { transform: scale(1.04); }
-  .jbody { padding: 20px; }
-  .jbody h3 { font-size: 24px; margin: 6px 0; }
-  @media (max-width: 1020px) { .sig-grid { grid-template-columns: repeat(2, 1fr); } }
+  .hero { position: relative; min-height: 92vh; display: flex; align-items: flex-end; overflow: hidden; background: #0b0b0b; }
+  .hero-media { position: absolute; inset: -6% 0; }
+  .hero-media img { width: 100%; height: 100%; object-fit: cover; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(5,5,5,0.55), transparent 55%); }
+  .hero-copy { position: relative; z-index: 2; padding-bottom: 12vh; color: #fff; }
+  .hero-copy .display { color: #fff; }
+  .label.light { color: #d9d0c3; }
+  .campaign { display: grid; grid-template-columns: 65fr 35fr; gap: 64px; align-items: end; }
+  .camp-media img { width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; }
+  .camp-copy h2 { margin: 16px 0 28px; }
+  .sechead { margin-bottom: 56px; max-width: 720px; }
+  .sechead h2 { margin: 14px 0 10px; }
+  .lede { font-family: var(--serif); font-size: 22px; font-style: italic; }
+  .story { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .story-grid { display: grid; grid-template-columns: 35fr 65fr; gap: 64px; align-items: center; }
+  .story-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+  .body { font-size: 17px; max-width: 420px; }
+  .more-row { display: flex; gap: 32px; margin-top: 48px; flex-wrap: wrap; }
+  .founders { background: #0b0b0b; color: #f5f3ee; }
+  .founders .muted { color: #a8a29a; }
+  .founders .tlink { color: #fff; border-color: #fff; }
+  .f-grid { display: grid; grid-template-columns: 55fr 45fr; gap: 64px; align-items: center; }
+  .f-collage { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .f-collage img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+  .f-collage img:last-child { margin-top: 48px; }
+  .j-lead { display: grid; grid-template-columns: 60fr 40fr; gap: 48px; align-items: center; margin-bottom: 64px; }
+  .j-lead .card-img { aspect-ratio: 16/10; }
   @media (max-width: 900px) {
-    .split, .duet-grid, .f-grid { grid-template-columns: 1fr; }
-    .hero { min-height: 78vh; }
+    .hero { min-height: 86vh; }
+    .campaign, .story-grid, .f-grid, .j-lead { grid-template-columns: 1fr; gap: 32px; }
+    .f-collage img:last-child { margin-top: 0; }
   }
 </style>

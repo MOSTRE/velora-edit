@@ -1,4 +1,4 @@
-export type ProductStatus = 'DRAFT' | 'REVIEW' | 'PUBLISHED' | 'ARCHIVED';
+export type ProductStatus = 'DRAFT' | 'REVIEW' | 'VERIFIED' | 'PUBLISHED' | 'ARCHIVED' | 'INVALID';
 
 export interface Product {
   id: string;
@@ -21,6 +21,16 @@ export interface Product {
   ali_product_id?: string;
   affiliate_url: string | null; // must be valid before publish
   source_url?: string;
+  // Real-source provenance (production records). Never invent these.
+  source_title?: string; // original retailer title; `title` is the editorial display title
+  source_name?: string; // e.g. "AliExpress"
+  source_product_id?: string;
+  source_last_checked?: string; // ISO timestamp
+  affiliate_verified?: boolean;
+  source_price?: number | null;
+  source_currency?: string;
+  price_checked_at?: string; // ISO timestamp; if stale/missing, show "See current price on AliExpress"
+  image_required?: boolean; // true when no legitimate image could be obtained — do not publish
   is_featured: boolean;
   is_new: boolean;
   is_best_value: boolean;

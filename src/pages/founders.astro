@@ -6,64 +6,60 @@ import SearchOverlay from '../components/SearchOverlay.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import Newsletter from '../components/Newsletter.astro';
 import { getFounders } from '../lib/store';
+import { editorialImage } from '../lib/images';
 
 const founders = getFounders();
 const [first, second] = founders;
+const sanaeImg = editorialImage('founder-sanae', 1400);
+const salmaImg = editorialImage('founder-salma', 1400);
 ---
 <Base
-  title="Founders — Meet the women behind VELORA EDIT"
+  title="Founders — The people behind the edit | VELORA EDIT"
   description="Two perspectives. One shared obsession with beautiful details. Meet Sanae and Salma, the founders of VELORA EDIT."
   canonical="https://velora-edit.pages.dev/founders"
-  ogImage="/images/founder-sanae.svg"
+  ogImage={sanaeImg.url}
 >
   <Header slot="header" />
   <Footer slot="footer" />
 
   <section class="wrap fhero">
-    <p class="eyebrow reveal"><span class="rule"></span>The founders</p>
-    <h1 class="reveal">Meet the women<br />behind VELORA EDIT.</h1>
-    <p class="serif sub reveal reveal-d1">Two perspectives. One shared obsession with beautiful details.</p>
+    <p class="label reveal"><span class="rule"></span>The Founders</p>
+    <h1 class="h-xl reveal">The people<br />behind the edit.</h1>
   </section>
 
   {first && (
-    <section class="split">
-      <div class="wrap split-grid">
+    <section class="section-tight">
+      <div class="wrap full reveal img-zoom">
+        <img src={sanaeImg.url} alt={sanaeImg.alt} width="1400" height="933" loading="eager" decoding="async" />
+      </div>
+      <div class="wrap prof">
         <div class="reveal">
-          <img src={first.portrait} alt={`Portrait placeholder for ${first.name}`} width="600" height="760" loading="eager" decoding="async" />
-          <p class="caption">Portrait placeholder — founder photography to be added.</p>
+          <p class="label">01 — {first.role}</p>
+          <h2 class="h-lg">{first.name}</h2>
         </div>
         <div class="reveal reveal-d1">
-          <p class="eyebrow"><span class="rule"></span>01 — {first.role}</p>
-          <h2>{first.name}</h2>
           <p class="bio">{first.bio}</p>
           <p class="serif quote">“{first.quote}”</p>
-          <hr class="hr-gold" />
-          <p class="tiny muted">Biography content is editable via the admin CMS and will grow with the brand.</p>
+          <p class="caption">Atelier detail, temporary placeholder imagery ({sanaeImg.credit}). Founder photography to be supplied.</p>
         </div>
       </div>
     </section>
   )}
 
-  <section class="interlude">
-    <div class="wrap reveal">
-      <p class="serif giant-type">Considered, personal,<br />beautifully made.</p>
-    </div>
-  </section>
-
   {second && (
-    <section class="split dark">
-      <div class="wrap split-grid reverse">
+    <section class="section-tight dark">
+      <div class="wrap full reveal img-zoom">
+        <img src={salmaImg.url} alt={salmaImg.alt} width="1400" height="933" loading="lazy" decoding="async" />
+      </div>
+      <div class="wrap prof reverse">
         <div class="reveal reveal-d1">
-          <p class="eyebrow light"><span class="rule"></span>02 — {second.role}</p>
-          <h2>{second.name}</h2>
           <p class="bio">{second.bio}</p>
           <p class="serif quote">“{second.quote}”</p>
-          <hr class="hr-gold" />
-          <p class="tiny muted">Biography content is editable via the admin CMS and will grow with the brand.</p>
+          <p class="caption dim">Atelier detail, temporary placeholder imagery ({salmaImg.credit}). Founder photography to be supplied.</p>
         </div>
         <div class="reveal">
-          <img src={second.portrait} alt={`Portrait placeholder for ${second.name}`} width="600" height="760" loading="lazy" decoding="async" />
-          <p class="caption light-cap">Portrait placeholder — founder photography to be added.</p>
+          <p class="label light">02 — {second.role}</p>
+          <h2 class="h-lg">{second.name}</h2>
         </div>
       </div>
     </section>
@@ -71,9 +67,9 @@ const [first, second] = founders;
 
   <section class="finale">
     <div class="wrap reveal">
-      <p class="eyebrow"><span class="rule"></span>Why we exist</p>
+      <p class="label"><span class="rule"></span>Why we exist</p>
       <p class="serif final-line">VELORA EDIT was created to make discovering jewelry feel personal again.</p>
-      <a class="btn" href="/edits">Explore the Edit</a>
+      <p><a class="tlink" href="/edits">Explore the edit →</a></p>
     </div>
   </section>
 
@@ -83,26 +79,22 @@ const [first, second] = founders;
 </Base>
 
 <style>
-  .fhero { padding: 72px 24px 40px; max-width: 1000px; }
-  h1 { font-size: clamp(48px, 7.5vw, 100px); margin: 10px 0; }
-  .sub { font-size: clamp(20px, 2.6vw, 28px); font-style: italic; color: #3a352e; }
-  .split { padding: 48px 0 72px; }
-  .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
-  .split-grid img { width: 100%; border: 1px solid var(--line); }
-  .split.dark { background: #111; color: #f7f5f0; }
-  .split.dark img { border-color: #2c2823; }
-  .split.dark .bio { color: #d8d2c6; }
-  .eyebrow.light { color: #a89e8d; }
-  .light-cap { color: #8d867a; }
-  h2 { font-size: clamp(40px, 5vw, 72px); letter-spacing: 0.14em; margin: 10px 0 16px; }
-  .bio { font-size: 18px; line-height: 1.7; max-width: 480px; }
-  .quote { font-size: clamp(22px, 2.6vw, 30px); font-style: italic; margin: 24px 0; }
-  .interlude { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 88px 0; text-align: center; }
-  .giant-type { font-size: clamp(34px, 5.5vw, 72px); line-height: 1.1; margin: 0; }
-  .finale { padding: 88px 0; text-align: center; }
-  .final-line { font-size: clamp(26px, 3.6vw, 44px); max-width: 800px; margin: 12px auto 28px; }
+  .fhero { padding: 96px 32px 48px; }
+  .fhero h1 { margin-top: 16px; }
+  .full img { width: 100%; aspect-ratio: 3/2; object-fit: cover; }
+  .prof { display: grid; grid-template-columns: 40fr 60fr; gap: 64px; margin-top: 48px; align-items: start; }
+  .prof.reverse { grid-template-columns: 60fr 40fr; }
+  .prof h2 { letter-spacing: 0.12em; margin-top: 12px; }
+  .bio { font-size: 18px; line-height: 1.7; max-width: 560px; }
+  .quote { font-size: clamp(24px, 3vw, 34px); font-style: italic; margin: 28px 0 12px; }
+  .dark { background: #0b0b0b; color: #f5f3ee; }
+  .dark .bio { color: #cfc9bd; }
+  .label.light { color: #a8a29a; }
+  .caption.dim { color: #8d867a; }
+  .finale { padding: 120px 0; text-align: center; }
+  .final-line { font-size: clamp(28px, 4vw, 52px); max-width: 860px; margin: 16px auto 32px; }
   @media (max-width: 860px) {
-    .split-grid, .split-grid.reverse { grid-template-columns: 1fr; gap: 32px; }
-    .split-grid.reverse > div:first-child { order: 2; }
+    .prof, .prof.reverse { grid-template-columns: 1fr; gap: 28px; }
+    .full img { aspect-ratio: 4/3; }
   }
 </style>

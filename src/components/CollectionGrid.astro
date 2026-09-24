@@ -6,15 +6,15 @@ interface Props { products: Product[]; pageSize?: number }
 const { products, pageSize = 12 } = Astro.props;
 ---
 <div data-filter-root data-pagesize={pageSize}>
-  <div class="toolbar">
-    <div class="chiprow" role="group" aria-label="Filter by">
-      <button class="chip" data-f-gender="all" aria-pressed="true">All</button>
-      <button class="chip" data-f-gender="women" aria-pressed="false">Women</button>
-      <button class="chip" data-f-gender="men" aria-pressed="false">Men</button>
-      <button class="chip" data-f-gender="unisex" aria-pressed="false">Unisex</button>
-      <button class="chip" data-f-under20 aria-pressed="false">Under €20</button>
+  <div class="filterbar">
+    <div class="fgroup" role="group" aria-label="Filter by">
+      <button class="flink" data-f-gender="all" aria-pressed="true">All</button>
+      <button class="flink" data-f-gender="women" aria-pressed="false">Women</button>
+      <button class="flink" data-f-gender="men" aria-pressed="false">Men</button>
+      <button class="flink" data-f-gender="unisex" aria-pressed="false">Unisex</button>
+      <button class="flink" data-f-under20 aria-pressed="false">Under €20</button>
     </div>
-    <label class="tiny muted">Sort
+    <label class="tiny muted sortwrap">Sort
       <select class="sortsel" data-sort aria-label="Sort products">
         <option value="featured">Featured</option>
         <option value="newest">Newest</option>
@@ -31,7 +31,7 @@ const { products, pageSize = 12 } = Astro.props;
       </div>
     ))}
   </div>
-  <div class="more"><button class="btn btn-ghost" data-more hidden>Load more</button></div>
+  <div class="more"><button class="tlink" data-more hidden>Load more →</button></div>
 </div>
 
 <script>
@@ -93,6 +93,5 @@ const { products, pageSize = 12 } = Astro.props;
 </script>
 
 <style>
-  .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 24px 0 8px; }
-  .more { text-align: center; margin: 32px 0 8px; }
+  .more { margin: 48px 0 8px; }
 </style>

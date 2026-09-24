@@ -1,23 +1,20 @@
 ---
 ---
-<div class="overlay" data-search hidden role="dialog" aria-modal="true" aria-label="Search">
-  <div class="wrap panel">
-    <div class="row">
-      <input data-search-input type="search" placeholder="Search rings, chains, quiet luxury…" aria-label="Search products" autocomplete="off" />
-      <button class="iconbtn" data-search-close aria-label="Close search">✕</button>
-    </div>
-    <div class="cols">
+<div class="searchfs" data-search hidden role="dialog" aria-modal="true" aria-label="Search">
+  <div class="wrap fs-top">
+    <span class="label">Search</span>
+    <button class="close" data-search-close aria-label="Close search">✕</button>
+  </div>
+  <div class="wrap fs-body">
+    <input data-search-input type="search" placeholder="Try ‘signet’, ‘gold chain’, ‘hoops’…" aria-label="Search products" autocomplete="off" />
+    <div class="fs-cols">
       <div>
-        <p class="eyebrow">Popular searches</p>
-        <div class="chips" data-search-suggest>
-          <button>signet</button><button>gold chain</button><button>hoops</button><button>silver</button><button>cuff</button><button>pearl</button><button>tennis</button><button>unisex</button>
-        </div>
+        <p class="label">Recent</p>
+        <div class="recent" data-search-recent><span class="tiny muted">No recent searches yet.</span></div>
       </div>
       <div>
-        <p class="eyebrow">Suggested categories</p>
-        <p class="small cats"><a href="/jewelry/rings">Rings</a> · <a href="/jewelry/necklaces">Necklaces</a> · <a href="/jewelry/chains">Chains</a> · <a href="/edit/under-20">Under €20</a> · <a href="/edit/quiet-luxury">Quiet Luxury</a></p>
-        <p class="eyebrow">Recent</p>
-        <div class="chips" data-search-recent><span class="tiny muted">No recent searches yet.</span></div>
+        <p class="label">Popular edits</p>
+        <p class="edits"><a href="/edit/under-20">Under €20</a><a href="/edit/quiet-luxury">Quiet Luxury</a><a href="/edit/new-arrivals">New Arrivals</a><a href="/edit/gold-edit">Gold Edit</a></p>
       </div>
     </div>
     <div data-search-results class="results" aria-live="polite"></div>
@@ -25,17 +22,27 @@
 </div>
 
 <style>
-  .overlay { position: fixed; inset: 0; z-index: 300; background: rgba(17,17,17,.45); padding: 8vh 16px 16px; }
-  .panel { background: var(--bg); border: 1px solid var(--line); max-width: 760px; margin: 0 auto; padding: 24px; }
-  .row { display: flex; gap: 8px; }
-  input[type="search"] { flex: 1; font: inherit; font-size: 20px; font-family: var(--serif); padding: 12px 14px; border: 1px solid var(--line); background: #fff; }
-  .iconbtn { background: none; border: 1px solid var(--line); padding: 0 16px; cursor: pointer; font-size: 16px; }
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chips button { border: 1px solid var(--line); background: #fff; padding: 8px 12px; cursor: pointer; font-size: 13px; }
-  .results { display: grid; gap: 8px; margin-top: 18px; }
-  .results a { display: flex; justify-content: space-between; gap: 12px; background: #fff; border: 1px solid var(--line-soft); padding: 10px 14px; font-size: 14px; }
-  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+  .searchfs { position: fixed; inset: 0; z-index: 400; background: var(--bg); overflow-y: auto; padding-bottom: 80px; }
+  .searchfs[hidden] { display: none; }
+  .fs-top { display: flex; justify-content: space-between; align-items: center; height: 72px; }
+  .close { background: none; border: 0; font-size: 20px; cursor: pointer; padding: 8px; }
+  input[type="search"] {
+    width: 100%; font-family: var(--serif); font-size: clamp(34px, 6vw, 72px);
+    background: transparent; border: 0; border-bottom: 1px solid var(--ink);
+    padding: 8px 0 20px; margin: 4vh 0 40px; border-radius: 0;
+  }
+  input[type="search"]:focus { outline: none; border-bottom-color: var(--accent); }
+  input[type="search"]::placeholder { color: #b9b3a7; }
+  .fs-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 32px; }
+  .recent { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; }
+  .recent button { background: none; border: 0; border-bottom: 1px solid var(--line); padding: 2px 0; cursor: pointer; font-size: 14px; color: var(--ink); }
+  .edits { display: grid; gap: 8px; margin-top: 12px; }
+  .edits a { font-family: var(--serif); font-size: 24px; transition: opacity 0.25s ease; }
+  .edits a:hover { opacity: 0.55; }
+  .results { display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .results a { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 15px; transition: padding-left 0.3s var(--ease); }
+  .results a:hover { padding-left: 8px; }
+  @media (max-width: 680px) { .fs-cols { grid-template-columns: 1fr; } }
 </style>
 
 <script>
@@ -46,17 +53,13 @@
     var results = document.querySelector('[data-search-results]');
     var openers = document.querySelectorAll('[data-search-open]');
     var index = null;
-    function open() { overlay.removeAttribute('hidden'); input.focus(); }
-    function close() { overlay.setAttribute('hidden', ''); }
+    function open() { overlay.removeAttribute('hidden'); document.body.style.overflow = 'hidden'; input.focus(); }
+    function close() { overlay.setAttribute('hidden', ''); document.body.style.overflow = ''; }
     openers.forEach(function (b) { b.addEventListener('click', open); });
     document.querySelector('[data-search-close]').addEventListener('click', close);
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
     document.addEventListener('keydown', function (e) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); open(); }
       if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) close();
-    });
-    document.querySelectorAll('[data-search-suggest] button').forEach(function (b) {
-      b.addEventListener('click', function () { input.value = b.textContent; run(input.value); input.focus(); });
     });
     var t;
     input.addEventListener('input', function () { clearTimeout(t); t = setTimeout(function () { run(input.value); }, 180); });
@@ -72,7 +75,6 @@
       results.innerHTML = '<div class="skeleton" aria-hidden="true"></div>';
       var data = await load();
       var words = q.split(/\s+/);
-      // Search across title, category, collection, tags, material, color and style.
       var hits = data.products.map(function (p) {
         var hay = [p.title, p.category, p.subtitle, p.gender, p.color, p.material, (p.tags || []).join(' '), (p.collection || []).join(' ')].join(' ').toLowerCase();
         var score = 0;
@@ -94,11 +96,11 @@
         paintRecent();
       } catch (e) {}
       if (!hits.length) {
-        results.innerHTML = '<p><strong>Nothing matched your search.</strong></p><p class="small muted">Explore the latest edit.</p><p><a class="btn btn-ghost" href="/edit/new-arrivals">Explore the latest edit</a></p>';
+        results.innerHTML = '<p class="serif" style="font-size:28px;margin:24px 0 8px">Nothing matched your search.</p><p class="small muted">Explore the latest edit.</p><p><a class="tlink" href="/edit/new-arrivals">Explore the latest edit →</a></p>';
         return;
       }
       results.innerHTML = hits.map(function (p) {
-        return '<a href="/product/' + p.slug + '"><span>' + p.title + ' <small class="muted">' + p.category + '</small></span><span class="muted">€' + Number(p.price).toFixed(2) + '</span></a>';
+        return '<a href="/product/' + p.slug + '"><span>' + p.title + ' <small class="muted">' + p.category + '</small></span><span>€' + Number(p.price).toFixed(2) + '</span></a>';
       }).join('');
     }
     function paintRecent() {

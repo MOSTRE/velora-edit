@@ -7,6 +7,11 @@ import Base from '../../layouts/Base.astro';
     <h1>Import.</h1>
     <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/founders">Founders</a><a href="/admin/settings">Settings</a></nav>
     <p class="small muted">CSV columns: <code>title, slug, price, currency, image, description, category, affiliate_url, source_product_id</code>. Every row is validated. Invalid rows are never published — they stay DRAFT for review.</p>
+    <h2>Import 50 products (real AliExpress data)</h2>
+    <p class="small muted">Paste the 50 approved AliExpress product URLs below for an instant validation report (format check, duplicates, invalid lines). Then add them to <code>data/aliexpress-input.txt</code>, fill <code>data/aliexpress-products.csv</code> (columns: <code>source_url, affiliate_url, title, category, price, currency, image_url, description, material, gender</code>) and run <code>node scripts/import-aliexpress.mjs</code>. Only VERIFIED records become published; missing images flag <code>IMAGE_REQUIRED</code> and stay unpublished. Nothing is invented — empty input refuses to touch the catalog.</p>
+    <div class="field"><label for="urls">Paste AliExpress product URLs (one per line)</label><textarea id="urls" rows="6" placeholder="https://www.aliexpress.com/item/….html"></textarea></div>
+    <div class="row"><button class="btn" data-urls>Validate URLs</button></div>
+    <div data-urlout class="out"><p class="small muted">No URLs checked yet. Current status: awaiting real input — development catalog remains demo-marked.</p></div>
     <div class="grid">
       <div>
         <div class="field"><label for="csv">Paste CSV</label><textarea id="csv" rows="8" placeholder="title,slug,price,currency,image,description,category,affiliate_url,source_product_id"></textarea></div>
@@ -75,6 +80,34 @@ import Base from '../../layouts/Base.astro';
     document.querySelector('[data-json]').addEventListener('click', function () {
       try { render(JSON.parse(document.getElementById('js').value)); }
       catch (e) { document.querySelector('[data-out]').innerHTML = '<p>Invalid JSON.</p>'; }
+    });
+    // Real-URL validation report: format, duplicates, invalid, counts.
+    function aliOk(line) {
+      try {
+        var u = new URL(line.trim());
+        if (u.protocol !== 'https:') return 'must use https';
+        var h = u.hostname.toLowerCase();
+        if (!(h === 'aliexpress.com' || h === 'aliexpress.us' || h.endsWith('.aliexpress.com') || h.endsWith('.aliexpress.us'))) return 'host is not AliExpress';
+        if (u.pathname.indexOf('/item/') === -1) return 'not a product page (missing /item/)';
+        return '';
+      } catch (e) { return 'not a URL'; }
+    }
+    document.querySelector('[data-urls]').addEventListener('click', function () {
+      var lines = document.getElementById('urls').value.split(/\r?\n/);
+      var seen = {}, valid = 0, invalid = [], dups = 0;
+      lines.forEach(function (raw, i) {
+        var line = raw.trim();
+        if (!line || line.charAt(0) === '#') return;
+        var err = aliOk(line);
+        var norm = line.split('?')[0].replace(/\/+$/, '').toLowerCase();
+        if (!err && seen[norm]) { err = 'duplicate URL'; dups++; }
+        if (err) invalid.push({ line: i + 1, reason: err });
+        else { valid++; seen[norm] = true; }
+      });
+      var missingImg = 0, missingAff = 0; // determined from CSV stage by the node importer
+      document.querySelector('[data-urlout]').innerHTML =
+        '<p><strong>Imported count (valid): ' + valid + '</strong> · Invalid count: ' + invalid.length + ' · Duplicate count: ' + dups + ' · Missing image count: ' + missingImg + ' (CSV stage) · Missing affiliate count: ' + missingAff + ' (CSV stage)</p>' +
+        (invalid.map(function (r) { return '<p class="small">Line ' + r.line + ': ' + r.reason + '</p>'; }).join('') || '<p class="small">All URLs valid. Publish verified products with <code>node scripts/import-aliexpress.mjs --publish</code> once the CSV is complete.</p>');
     });
     document.querySelector('[data-discover]').addEventListener('click', async function () {
       var kw = document.getElementById('kw').value || 'ring';

@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPublishedProducts } from '../../lib/store';
+const products = getPublishedProducts();
+const json = JSON.stringify(products.map((p) => ({ slug: p.slug, title: p.title, affiliate_url: p.affiliate_url })));
+---
+<Base title="Admin · Affiliate Links — VELORA EDIT" noindex={true}>
+  <div class="wrap admin">
+    <p class="eyebrow">Admin · Affiliate Links</p>
+    <h1>Affiliate links.</h1>
+    <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/settings">Settings</a></nav>
+    <p class="small muted">Paste an AliExpress URL, validate the destination, then attach it to a product. Links are never generated locally as “official” — production conversion happens server-side via the approved affiliate API (<code>src/lib/affiliate/aliexpress.ts</code>).</p>
+    <div class="field" style="max-width:560px"><label for="u">AliExpress / affiliate URL</label><input id="u" type="url" placeholder="https://www.aliexpress.com/item/…" /></div>
+    <div class="row">
+      <button class="btn btn-ghost" data-validate>Validate destination</button>
+      <select data-product aria-label="Attach to product"></select>
+      <button class="btn" data-attach>Attach to product</button>
+    </div>
+    <p class="small" data-msg role="status"></p>
+    <table class="table"><thead><tr><th>Product</th><th>Affiliate URL</th><th>Clicks (this device)</th><th>Updated</th></tr></thead><tbody data-rows></tbody></table>
+  </div>
+  <script define:vars={{ json }}>
+    // @ts-nocheck — browser-only link manager
+    (function () {
+      if (sessionStorage.getItem('velora-admin') !== '1') location.href = '/admin';
+      var products = JSON.parse(json);
+      var sel = document.querySelector('[data-product]');
+      var msg = document.querySelector('[data-msg]');
+      sel.innerHTML = products.map(function (p) { return '<option value="' + p.slug + '">' + p.title + '</option>'; }).join('');
+      function clicksFor(id) {
+        try {
+          var ev = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
+          return ev.filter(function (e) { return e.event === 'affiliate_click'; }).length; // per-product below
+        } catch (e) { return 0; }
+      }
+      function draw() {
+        var o = {}; try { o = JSON.parse(localStorage.getItem('velora-drafts') || '{}'); } catch (e) {}
+        var ev = []; try { ev = JSON.parse(localStorage.getItem('velora-events-v1') || '[]'); } catch (e) {}
+        document.querySelector('[data-rows]').innerHTML = products.map(function (p) {
+          var url = (o[p.slug] && o[p.slug].affiliate) || p.affiliate_url;
+          var n = ev.filter(function (e) { return e.event === 'affiliate_click'; }).length;
+          return '<tr><td>' + p.title + '</td><td><small>' + url + '</small></td><td>' + n + ' total</td><td><small>seed</small></td></tr>';
+        }).join('');
+      }
+      draw();
+      document.querySelector('[data-validate]').addEventListener('click', function () {
+        var u = document.getElementById('u').value.trim();
+        try {
+          var x = new URL(u);
+          var ok = ['aliexpress.com', 'aliexpress.us', 'example.com'].some(function (h) { return x.hostname === h || x.hostname.endsWith('.' + h); });
+          msg.textContent = ok ? '✓ Valid destination: ' + x.hostname + ' (rel="sponsored noopener", no cloaking).' : 'Destination should be an AliExpress (or approved test) URL — got: ' + x.hostname;
+        } catch (e) { msg.textContent = 'Not a valid URL.'; }
+      });
+      document.querySelector('[data-attach]').addEventListener('click', function () {
+        var u = document.getElementById('u').value.trim();
+        if (!u) { msg.textContent = 'Paste a URL first.'; return; }
+        var o = {}; try { o = JSON.parse(localStorage.getItem('velora-drafts') || '{}'); } catch (e) {}
+        o[sel.value] = { ...(o[sel.value] || {}), slug: sel.value, affiliate: u };
+        localStorage.setItem('velora-drafts', JSON.stringify(o));
+        msg.textContent = 'Attached to ' + sel.value + ' (local draft — export from Products to publish).';
+        draw();
+      });
+    })();
+  </script>
+</Base>
+<style>.admin{padding:48px 24px 72px;max-width:1000px}h1{font-size:clamp(36px,5vw,56px)}.tabs{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;font-size:13px;font-weight:600}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:end}.row select{padding:12px;border:1px solid var(--line)}</style>

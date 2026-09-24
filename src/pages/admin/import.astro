@@ -1,0 +1,96 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Admin · Import — VELORA EDIT" noindex={true}>
+  <div class="wrap admin">
+    <p class="eyebrow">Admin · Import</p>
+    <h1>Import.</h1>
+    <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/settings">Settings</a></nav>
+    <p class="small muted">CSV columns: <code>title, slug, price, currency, image, description, category, affiliate_url, source_product_id</code>. Every row is validated. Invalid rows are never published — they stay DRAFT for review.</p>
+    <div class="grid">
+      <div>
+        <div class="field"><label for="csv">Paste CSV</label><textarea id="csv" rows="8" placeholder="title,slug,price,currency,image,description,category,affiliate_url,source_product_id"></textarea></div>
+        <div class="row"><button class="btn btn-ghost" data-csv>Validate CSV</button><button class="btn" data-json>Validate JSON below</button></div>
+        <div class="field" style="margin-top:12px"><label for="js">Or paste JSON array</label><textarea id="js" rows="6" placeholder='[{"title":"…","price":12.9,…}]'></textarea></div>
+      </div>
+      <div>
+        <h2>Results</h2>
+        <div data-out class="out"><p class="small muted">Nothing validated yet.</p></div>
+      </div>
+    </div>
+    <h2>Discovery pipeline (optional automation)</h2>
+    <ol class="small muted">
+      <li>Search keyword → retrieve approved product data (official API only).</li>
+      <li>Validate → normalize → dedupe → filter → editorial score (<code>src/lib/curation.ts</code>).</li>
+      <li>Generate/store affiliate destination where supported → save as DRAFT.</li>
+      <li>Admin reviews → publishes. Never auto-publish.</li>
+    </ol>
+    <div class="field" style="max-width:420px"><label for="kw">Try mock discovery (uses local seed, clearly demo)</label><input id="kw" placeholder="e.g. signet" /></div>
+    <button class="btn btn-ghost" data-discover>Run mock discovery</button>
+    <div data-disc class="out"></div>
+  </div>
+<script>
+  // @ts-nocheck — browser-only import validator
+  (function () {
+    if (sessionStorage.getItem('velora-admin') !== '1') location.href = '/admin';
+    function slugify(s) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
+    function validUrl(u) { try { var x = new URL(u); return x.protocol === 'http:' || x.protocol === 'https:'; } catch (e) { return false; } }
+    function rowErrors(d, seen) {
+      var e = [];
+      if (!d.title) e.push('missing title');
+      if (d.price && isNaN(Number(d.price))) e.push('price not a number');
+      if (!d.affiliate_url) e.push('missing affiliate_url → stays DRAFT');
+      else if (!validUrl(d.affiliate_url)) e.push('affiliate_url invalid');
+      var s = d.slug || slugify(d.title || '');
+      if (!s) e.push('missing slug'); else if (seen.has(s)) e.push('duplicate slug');
+      if (s) seen.add(s);
+      return e;
+    }
+    function render(list) {
+      var seen = new Set();
+      var valid = 0, invalid = [];
+      list.forEach(function (d, i) {
+        var errs = rowErrors(d, seen);
+        if (!errs.length) valid++;
+        else invalid.push({ line: i + 2, errors: errs });
+      });
+      document.querySelector('[data-out]').innerHTML =
+        '<p><strong>' + valid + ' valid</strong> · ' + invalid.length + ' invalid · 0 published automatically (all go to REVIEW/DRAFT).</p>' +
+        (invalid.map(function (r) { return '<p class="small">Line ' + r.line + ': ' + r.errors.join('; ') + '</p>'; }).join('') || '<p class="small">All rows valid — save as DRAFT from Products.</p>');
+    }
+    document.querySelector('[data-csv]').addEventListener('click', function () {
+      var text = document.getElementById('csv').value.trim();
+      if (!text) return;
+      var lines = text.split(/\r?\n/);
+      var headers = lines[0].split(',').map(function (h) { return h.trim().toLowerCase(); });
+      var rows = lines.slice(1).map(function (ln) {
+        var cells = [], cur = '', inQ = false;
+        for (var ch of ln) { if (ch === '"') inQ = !inQ; else if (ch === ',' && !inQ) { cells.push(cur.trim()); cur = ''; } else cur += ch; }
+        cells.push(cur.trim());
+        var o = {}; headers.forEach(function (h, i) { o[h] = (cells[i] || '').replace(/^"|"$/g, ''); });
+        return o;
+      });
+      render(rows);
+    });
+    document.querySelector('[data-json]').addEventListener('click', function () {
+      try { render(JSON.parse(document.getElementById('js').value)); }
+      catch (e) { document.querySelector('[data-out]').innerHTML = '<p>Invalid JSON.</p>'; }
+    });
+    document.querySelector('[data-discover]').addEventListener('click', async function () {
+      var kw = document.getElementById('kw').value || 'ring';
+      var idx = await (await fetch('/search-index.json')).json();
+      var hits = idx.products.filter(function (p) { return (p.title + p.category).toLowerCase().includes(kw.toLowerCase()); }).slice(0, 6);
+      document.querySelector('[data-disc]').innerHTML = '<p class="small">' + hits.length + ' candidates for “' + kw + '” → saved as DRAFT (mock, demo data).</p>' +
+        hits.map(function (h) { return '<p class="small">· ' + h.title + ' — €' + Number(h.price).toFixed(2) + '</p>'; }).join('');
+    });
+  })();
+</script>
+</Base>
+<style>
+  .admin{padding:48px 24px 72px;max-width:1100px}h1{font-size:clamp(36px,5vw,56px)}h2{font-size:24px;margin:20px 0 8px}
+  .tabs{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;font-size:13px;font-weight:600}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .out{background:#fff;border:1px solid var(--line);padding:16px;min-height:120px;margin-top:12px}
+  .row{display:flex;gap:8px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+</style>

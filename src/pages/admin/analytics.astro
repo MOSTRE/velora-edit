@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Admin · Analytics — VELORA EDIT" noindex={true}>
+  <div class="wrap admin">
+    <p class="eyebrow">Admin · Analytics</p>
+    <h1>Analytics.</h1>
+    <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/settings">Settings</a></nav>
+    <div class="cards" data-cards></div>
+    <h2>Top outbound products</h2>
+    <table class="table"><thead><tr><th>Product</th><th>Views</th><th>Clicks</th><th>CTR</th></tr></thead><tbody data-top></tbody></table>
+    <h2>Search queries</h2><div data-q></div>
+    <h2>Weekly clicks</h2><div data-bars class="bars"></div>
+  </div>
+<script>
+  // @ts-nocheck — browser-only admin analytics
+  (function () {
+    if (sessionStorage.getItem('velora-admin') !== '1') location.href = '/admin';
+    var ev = []; try { ev = JSON.parse(localStorage.getItem('velora-events-v1') || '[]'); } catch (e) {}
+    var views = ev.filter(function (e) { return e.event === 'product_view'; }).length;
+    var clicks = ev.filter(function (e) { return e.event === 'affiliate_click'; }).length;
+    document.querySelector('[data-cards]').innerHTML =
+      '<div class="stat"><p class="tiny muted">Product views</p><p class="num">' + views + '</p></div>' +
+      '<div class="stat"><p class="tiny muted">Affiliate clicks</p><p class="num">' + clicks + '</p></div>' +
+      '<div class="stat"><p class="tiny muted">Click rate</p><p class="num">' + (views ? (clicks / views * 100).toFixed(2) + '%' : '—') + '</p></div>';
+    var by = {};
+    ev.forEach(function (e) {
+      if (!e.product_id) return;
+      by[e.product_id] = by[e.product_id] || { v: 0, c: 0 };
+      if (e.event === 'product_view') by[e.product_id].v++;
+      if (e.event === 'affiliate_click') by[e.product_id].c++;
+    });
+    document.querySelector('[data-top]').innerHTML = Object.entries(by).sort(function (a, b) { return b[1].c - a[1].c; }).slice(0, 15).map(function (r) {
+      return '<tr><td>' + r[0] + '</td><td>' + r[1].v + '</td><td>' + r[1].c + '</td><td>' + (r[1].v ? (r[1].c / r[1].v * 100).toFixed(1) + '%' : '—') + '</td></tr>';
+    }).join('') || '<tr><td colspan="4">No data yet.</td></tr>';
+    var q = {};
+    ev.filter(function (e) { return e.event === 'search' && e.query; }).forEach(function (e) { q[e.query] = (q[e.query] || 0) + 1; });
+    var qs = Object.entries(q).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 10);
+    document.querySelector('[data-q]').innerHTML = qs.map(function (r) { return '<p class="small">“' + r[0] + '” — ' + r[1] + '</p>'; }).join('') || '<p class="small muted">No searches yet.</p>';
+    var days = {};
+    ev.filter(function (e) { return e.event === 'affiliate_click'; }).forEach(function (e) { var d = e.timestamp.slice(0, 10); days[d] = (days[d] || 0) + 1; });
+    var keys = Object.keys(days).sort().slice(-14);
+    var max = Math.max.apply(null, [1].concat(keys.map(function (k) { return days[k]; })));
+    document.querySelector('[data-bars]').innerHTML = keys.map(function (k) {
+      return '<div class="bar"><span style="height:' + Math.round(days[k] / max * 100) + '%"></span><small>' + k.slice(5) + '</small></div>';
+    }).join('') || '<p class="small muted">No clicks yet.</p>';
+  })();
+</script>
+</Base>
+<style>.admin{padding:48px 24px 72px;max-width:1000px}h1{font-size:clamp(36px,5vw,56px)}h2{font-size:24px;margin:24px 0 10px}.tabs{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;font-size:13px;font-weight:600}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:#fff;border:1px solid var(--line);padding:20px}.num{font-family:var(--serif);font-size:36px;margin:0}.bars{display:flex;gap:8px;align-items:end;min-height:120px;background:#fff;border:1px solid var(--line);padding:16px}.bar{display:grid;gap:4px;justify-items:center;flex:1}.bar span{display:block;width:100%;background:#111;min-height:4px}@media(max-width:640px){.cards{grid-template-columns:1fr}}</style>

@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Admin · Settings — VELORA EDIT" noindex={true}>
+  <div class="wrap admin">
+    <p class="eyebrow">Admin · Settings</p>
+    <h1>Settings.</h1>
+    <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/settings">Settings</a></nav>
+    <div class="field" style="max-width:420px"><label for="pin">Dev admin PIN (this device)</label><input id="pin" placeholder="e.g. 4821" /><p class="tiny muted">Production uses Supabase Auth + <code>profiles.role</code> — this PIN is dev-only.</p></div>
+    <button class="btn" data-save-pin>Save PIN</button>
+    <h2>Environment</h2>
+    <table class="table"><tbody data-env></tbody></table>
+    <h2>Legal placeholders</h2>
+    <p class="small muted">Company name, address, VAT and contact email are configurable — currently placeholders in <code>/privacy</code> and <code>/terms</code>. Nothing is invented.</p>
+    <h2>Danger zone</h2>
+    <button class="btn btn-ghost" data-wipe>Clear local drafts + events on this device</button>
+  </div>
+<script>
+  // @ts-nocheck — browser-only admin settings
+  (function () {
+    if (sessionStorage.getItem('velora-admin') !== '1') location.href = '/admin';
+    document.querySelector('[data-save-pin]').addEventListener('click', function () {
+      var v = document.getElementById('pin').value.trim();
+      if (v.length >= 4) { localStorage.setItem('velora-admin-pin', v); alert('PIN saved on this device.'); }
+    });
+    document.querySelector('[data-env]').innerHTML =
+      '<tr><td>Affiliate mode</td><td><code>mock</code> (set AFFILIATE_MODE=production when credentials exist)</td></tr>' +
+      '<tr><td>Price mode</td><td><code>cached</code> (PUBLIC_PRICE_MODE)</td></tr>' +
+      '<tr><td>Supabase</td><td><code>not configured in static build</code> — see README + supabase/migrations</td></tr>';
+    document.querySelector('[data-wipe]').addEventListener('click', function () {
+      ['velora-drafts', 'velora-events-v1', 'velora-newsletter', 'velora-contact'].forEach(function (k) { localStorage.removeItem(k); });
+      alert('Cleared.');
+    });
+  })();
+</script>
+</Base>
+<style>.admin{padding:48px 24px 72px;max-width:900px}h1{font-size:clamp(36px,5vw,56px)}h2{font-size:24px;margin:24px 0 8px}.tabs{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;font-size:13px;font-weight:600}</style>

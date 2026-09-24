@@ -1,0 +1,101 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Admin — VELORA EDIT" description="VELORA EDIT administration." noindex={true}>
+  <div class="wrap admin">
+    <p class="eyebrow">VELORA EDIT · Admin</p>
+    <h1>Dashboard.</h1>
+    <p class="tiny muted">Demo gate: production enforces Supabase Auth + <code>profiles.role='admin'</code> server-side (see <code>supabase/migrations</code>). This static build uses a local dev gate — set a PIN in Settings.</p>
+
+    <div data-gate>
+      <div class="field" style="max-width:320px"><label for="pin">Admin PIN (dev)</label><input id="pin" type="password" inputmode="numeric" placeholder="Default: 1234 — change in Settings" /></div>
+      <button class="btn" data-unlock>Unlock</button>
+      <p class="small" data-gate-msg role="status"></p>
+      <p class="tiny muted">Supabase Auth sign-in appears here automatically when <code>PUBLIC_SUPABASE_URL</code> is configured.</p>
+    </div>
+
+    <div data-dash hidden>
+      <nav class="tabs">
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/products">Products</a>
+        <a href="/admin/affiliate-links">Affiliate Links</a>
+        <a href="/admin/import">Import</a>
+        <a href="/admin/analytics">Analytics</a>
+        <a href="/admin/settings">Settings</a>
+        <a href="/">← View site</a>
+      </nav>
+      <div class="cards" data-cards></div>
+      <h2>Top products (this device, real events)</h2>
+      <table class="table"><thead><tr><th>Product</th><th>Views</th><th>Clicks</th><th>CTR</th></tr></thead><tbody data-top></tbody></table>
+      <h2>Daily affiliate clicks</h2>
+      <div data-bars class="bars"></div>
+      <p class="tiny muted">Numbers come from actual stored events only — never seeded. Production reads Supabase <code>click_events</code>; this device shows local events.</p>
+    </div>
+  </div>
+</Base>
+
+<script>
+  // @ts-nocheck — browser-only admin dashboard
+  (function () {
+    var pinInput = document.getElementById('pin');
+    var gateMsg = document.querySelector('[data-gate-msg]');
+    var gate = document.querySelector('[data-gate]');
+    var dash = document.querySelector('[data-dash]');
+    function expected() { return localStorage.getItem('velora-admin-pin') || '1234'; }
+    function unlock() {
+      if (pinInput.value === expected() || sessionStorage.getItem('velora-admin') === '1') {
+        sessionStorage.setItem('velora-admin', '1');
+        gate.setAttribute('hidden', ''); dash.removeAttribute('hidden'); render();
+      } else gateMsg.textContent = 'Incorrect PIN.';
+    }
+    if (sessionStorage.getItem('velora-admin') === '1') { gate.setAttribute('hidden', ''); dash.removeAttribute('hidden'); render(); }
+    document.querySelector('[data-unlock]').addEventListener('click', unlock);
+    function render() {
+      var events = [];
+      try { events = JSON.parse(localStorage.getItem('velora-events-v1') || '[]'); } catch (e) {}
+      var views = events.filter(function (e) { return e.event === 'product_view'; }).length;
+      var clicks = events.filter(function (e) { return e.event === 'affiliate_click'; }).length;
+      var ctr = views ? (clicks / views * 100).toFixed(2) + '%' : '—';
+      document.querySelector('[data-cards]').innerHTML =
+        card('Product views', views) + card('Affiliate clicks', clicks) + card('Click rate', ctr);
+      var by = {};
+      events.forEach(function (e) {
+        if (!e.product_id) return;
+        by[e.product_id] = by[e.product_id] || { v: 0, c: 0 };
+        if (e.event === 'product_view') by[e.product_id].v++;
+        if (e.event === 'affiliate_click') by[e.product_id].c++;
+      });
+      var rows = Object.entries(by).sort(function (a, b) { return b[1].c - a[1].c; }).slice(0, 10);
+      document.querySelector('[data-top]').innerHTML = rows.map(function (r) {
+        var c = r[1].v ? (r[1].c / r[1].v * 100).toFixed(1) + '%' : '—';
+        return '<tr><td>' + r[0] + '</td><td>' + r[1].v + '</td><td>' + r[1].c + '</td><td>' + c + '</td></tr>';
+      }).join('') || '<tr><td colspan="4">No events yet — browse the site and click a “Shop on AliExpress” link.</td></tr>';
+      var days = {};
+      events.filter(function (e) { return e.event === 'affiliate_click'; }).forEach(function (e) {
+        var d = e.timestamp.slice(0, 10); days[d] = (days[d] || 0) + 1;
+      });
+      var keys = Object.keys(days).sort().slice(-14);
+      var max = Math.max.apply(null, [1].concat(keys.map(function (k) { return days[k]; })));
+      document.querySelector('[data-bars]').innerHTML = keys.map(function (k) {
+        return '<div class="bar"><span style="height:' + Math.round(days[k] / max * 100) + '%"></span><small>' + k.slice(5) + '</small></div>';
+      }).join('') || '<p class="small muted">No clicks yet.</p>';
+    }
+    function card(label, value) { return '<div class="stat"><p class="tiny muted">' + label + '</p><p class="num">' + value + '</p></div>'; }
+  })();
+</script>
+
+<style>
+  .admin { padding: 48px 24px 72px; max-width: 1000px; }
+  h1 { font-size: clamp(38px, 5vw, 60px); margin: 8px 0 8px; }
+  .tabs { display: flex; gap: 16px; flex-wrap: wrap; margin: 24px 0; font-size: 13px; font-weight: 600; }
+  .tabs a { border-bottom: 2px solid transparent; padding-bottom: 4px; }
+  .tabs a:hover { border-color: #111; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0 28px; }
+  .stat { background: #fff; border: 1px solid var(--line); padding: 20px; }
+  .num { font-family: var(--serif); font-size: 38px; margin: 0; }
+  h2 { font-size: 26px; margin: 28px 0 12px; }
+  .bars { display: flex; gap: 8px; align-items: end; min-height: 120px; background: #fff; border: 1px solid var(--line); padding: 16px; }
+  .bar { display: grid; gap: 4px; justify-items: center; flex: 1; }
+  .bar span { display: block; width: 100%; background: #111; min-height: 4px; }
+  @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+</style>

@@ -13,7 +13,7 @@ Production URL:
 https://velora-edit.pages.dev
 
 Preview deployment:
-https://db3c2a12.velora-edit.pages.dev
+https://9320d320.velora-edit.pages.dev
 
 Branch:
 main
@@ -37,7 +37,7 @@ Supabase:
 NOT CONFIGURED (migrations 001 + 002 verified in repo, not applied to a live project)
 
 Deployment:
-VERIFIED LIVE (Production environment, branch main, commit d957cc7, HTTP 200 on all checked routes)
+VERIFIED LIVE (Production environment, branch main, commit 01ab0ef, HTTP 200 on all checked routes)
 
 Build command:
 npm run build

@@ -1,0 +1,21 @@
+name: Scheduled data refresh (optional)
+
+# Optional: runs the approved-source refresh pipeline in DRAFT-only mode.
+# Requires repo secrets: SUPABASE_URL, SUPABASE_SERVICE_KEY, ALI_* (never commit secrets).
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: node scripts/daily-refresh.mjs
+        env:
+          AFFILIATE_MODE: ${{ secrets.AFFILIATE_MODE || 'mock' }}

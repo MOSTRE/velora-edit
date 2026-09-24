@@ -1,17 +1,43 @@
 ---
 import Base from '../../layouts/Base.astro';
+import pendingRaw from '../../../data/pending.json';
+import reportRaw from '../../../data/import-report.json';
+
+const pending = pendingRaw as unknown as { source_url: string; status: string; reason: string; title: string; category: string; image_status: string; affiliate_status: string; price_status: string }[];
+const report = reportRaw as unknown as { date: string; totals: Record<string, number>; affiliate: string };
 ---
 <Base title="Admin · Import — VELORA EDIT" noindex={true}>
   <div class="wrap admin">
     <p class="eyebrow">Admin · Import</p>
     <h1>Import.</h1>
     <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/founders">Founders</a><a href="/admin/settings">Settings</a></nav>
+    <h2>Pipeline status (generated {report.date.slice(0, 10)})</h2>
+    <p class="small">
+      <strong>{report.totals.published} verified published</strong> ·
+      {pending.length} pending source URLs ·
+      Affiliate: {report.affiliate} ·
+      Image status and verification status per URL below — anything not PUBLISHED needs attention.
+    </p>
+    <table class="table">
+      <thead><tr><th>Source URL</th><th>Status</th><th>Title / reason</th><th>Image</th><th>Affiliate</th></tr></thead>
+      <tbody>
+        {pending.map((r) => (
+          <tr>
+            <td><small>{r.source_url.replace('https://www.aliexpress.com/item/', '…/item/')}</small></td>
+            <td><strong>{r.status}</strong></td>
+            <td><small>{r.title || r.reason}</small></td>
+            <td><small>{r.image_status}</small></td>
+            <td><small>{r.affiliate_status}</small></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
     <p class="small muted">CSV columns: <code>title, slug, price, currency, image, description, category, affiliate_url, source_product_id</code>. Every row is validated. Invalid rows are never published — they stay DRAFT for review.</p>
     <h2>Import 50 products (real AliExpress data)</h2>
     <p class="small muted">Paste the 50 approved AliExpress product URLs below for an instant validation report (format check, duplicates, invalid lines). Then add them to <code>data/aliexpress-input.txt</code>, fill <code>data/aliexpress-products.csv</code> (columns: <code>source_url, affiliate_url, title, category, price, currency, image_url, description, material, gender</code>) and run <code>node scripts/import-aliexpress.mjs</code>. Only VERIFIED records become published; missing images flag <code>IMAGE_REQUIRED</code> and stay unpublished. Nothing is invented — empty input refuses to touch the catalog.</p>
     <div class="field"><label for="urls">Paste AliExpress product URLs (one per line)</label><textarea id="urls" rows="6" placeholder="https://www.aliexpress.com/item/….html"></textarea></div>
     <div class="row"><button class="btn" data-urls>Validate URLs</button></div>
-    <div data-urlout class="out"><p class="small muted">No URLs checked yet. Current status: awaiting real input — development catalog remains demo-marked.</p></div>
+    <div data-urlout class="out"><p class="small muted">No URLs checked yet. Current catalog: {report.totals.published} verified published, {pending.length} pending.</p></div>
     <div class="grid">
       <div>
         <div class="field"><label for="csv">Paste CSV</label><textarea id="csv" rows="8" placeholder="title,slug,price,currency,image,description,category,affiliate_url,source_product_id"></textarea></div>

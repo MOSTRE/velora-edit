@@ -79,6 +79,26 @@ test('templates: affiliate links use sponsored noopener + adjacent disclosure', 
   assert.ok(tpl.includes('data-affiliate-click'), 'click tracking hook present');
 });
 
+test('affiliate state is consistent: sponsored only when verified, noopener otherwise', () => {
+  const all = JSON.parse(fs.readFileSync('src/content/products.json', 'utf-8'));
+  const tpl = fs.readFileSync('src/pages/product/[slug].astro', 'utf-8');
+  assert.ok(tpl.includes("rel={affiliateLive ? 'sponsored noopener' : 'noopener'}"), 'conditional rel in template');
+  for (const p of all.filter((x) => x.is_published)) {
+    if (p.affiliate_url) assert.notEqual(p.affiliate_verified, false, `${p.slug}: affiliate link must be verified to earn sponsored rel`);
+    else assert.equal(p.affiliate_verified, false, `${p.slug}: direct link must be flagged pending`);
+  }
+});
+
+test('blocked and invalid URLs remain unpublished', () => {
+  const report = JSON.parse(fs.readFileSync('data/import-report.json', 'utf-8'));
+  const bad = new Set(report.rows.filter((r) => r.status === 'BLOCKED' || r.status === 'INVALID').map((r) => r.source_url));
+  assert.ok(bad.size === 31, '31 unpublished source URLs tracked');
+  const all = JSON.parse(fs.readFileSync('src/content/products.json', 'utf-8'));
+  for (const p of all.filter((x) => x.is_published)) {
+    assert.ok(!bad.has(p.source_url), `${p.slug} published from blocked/invalid source`);
+  }
+});
+
 test('founders page exposes Sanae and Salma', () => {
   assert.ok(fs.existsSync('src/pages/founders.astro'));
   const tpl = fs.readFileSync('src/pages/founders.astro', 'utf-8');

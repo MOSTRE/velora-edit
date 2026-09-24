@@ -4,9 +4,16 @@ import type { Product } from '../types';
 export interface AffiliateProvider {
   readonly name: string;
   readonly mode: 'mock' | 'production';
+  /** Resolve an approved product record by its retailer URL. */
+  getProductByUrl(url: string): Promise<Partial<Product> | null>;
+  /** Resolve an approved product record by retailer product ID. */
+  getProductById(id: string): Promise<Partial<Product> | null>;
+  searchProducts(keyword: string, limit?: number): Promise<Partial<Product>[]>;
+  /** Generate a real tracking affiliate link. Never invent one. */
+  generateAffiliateLink(sourceUrl: string): Promise<{ affiliate_url: string; tracking_id: string; checked_at: string }>;
+  /** Legacy alias — prefer generateAffiliateLink for new code. */
   generateAffiliateUrl(sourceUrlOrId: string): Promise<string>;
   validateAffiliateUrl(url: string): Promise<{ valid: boolean; reason?: string; destination?: string }>;
-  searchProducts(keyword: string, limit?: number): Promise<Partial<Product>[]>;
   getProduct(id: string): Promise<Partial<Product> | null>;
 }
 

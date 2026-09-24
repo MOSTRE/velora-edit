@@ -30,6 +30,41 @@ export class AliExpressAffiliateProvider implements AffiliateProvider {
     return Boolean(this.appKey && this.appSecret && this.trackingId);
   }
 
+  /** Extract the retailer product ID from an /item/ URL, or '' when absent. */
+  static productIdFromUrl(url: string): string {
+    try {
+      const u = new URL(url);
+      const m = u.pathname.match(/(\d+)\.html/);
+      return m ? m[1] : '';
+    } catch { return ''; }
+  }
+
+  async getProductByUrl(url: string): Promise<Partial<Product> | null> {
+    const id = AliExpressAffiliateProvider.productIdFromUrl(url);
+    if (!id) return null;
+    return this.getProductById(id);
+  }
+
+  async getProductById(_id: string): Promise<Partial<Product> | null> {
+    if (!this.isConfigured()) throw new Error('AliExpress affiliate credentials are not configured.');
+    // Wire the official product-query endpoint here once credentials are granted
+    // (see docs/ALIEXPRESS_SETUP.md). Never scrape product pages as a substitute.
+    throw new Error('Official AliExpress product endpoint not wired — see docs/ALIEXPRESS_SETUP.md.');
+  }
+
+  /**
+   * Generate a REAL tracking affiliate link via the official API.
+   * Throws when unconfigured. Never synthesizes a link locally.
+   */
+  async generateAffiliateLink(_sourceUrl: string): Promise<{ affiliate_url: string; tracking_id: string; checked_at: string }> {
+    if (!this.isConfigured()) {
+      throw new Error('AliExpress affiliate credentials are not configured — product stays on its direct retailer link (pending conversion).');
+    }
+    // Wire the official promotion-link generation call here once credentials
+    // are granted (see docs/ALIEXPRESS_SETUP.md). Do NOT invent endpoint shapes.
+    throw new Error('Official AliExpress link-generation endpoint not wired — see docs/ALIEXPRESS_SETUP.md.');
+  }
+
   async generateAffiliateUrl(_sourceUrlOrId: string): Promise<string> {
     if (!this.isConfigured()) {
       throw new Error('AliExpress affiliate credentials are not configured. Paste an affiliate URL manually or stay in AFFILIATE_MODE=mock.');

@@ -6,6 +6,21 @@ export class MockAffiliateProvider implements AffiliateProvider {
   readonly name = 'mock';
   readonly mode = 'mock' as const;
 
+  async getProductByUrl(url: string): Promise<Partial<Product> | null> {
+    const { default: seed } = await import('../../content/products.json');
+    return ((seed as Product[]).find((p) => p.source_url === url) as Partial<Product>) ?? null;
+  }
+
+  async getProductById(id: string): Promise<Partial<Product> | null> {
+    return this.getProduct(id);
+  }
+
+  async generateAffiliateLink(_sourceUrl: string): Promise<{ affiliate_url: string; tracking_id: string; checked_at: string }> {
+    // Mock mode has no affiliate system — callers must keep the direct
+    // retailer link and mark the product pending conversion.
+    throw new Error('Mock mode cannot generate affiliate links — use the direct retailer link (pending conversion).');
+  }
+
   async generateAffiliateUrl(sourceUrlOrId: string): Promise<string> {
     const id = encodeURIComponent(sourceUrlOrId.trim().slice(0, 120) || 'demo');
     return `https://example.com/mock-affiliate?to=${id}&utm_source=velora-edit&utm_medium=affiliate`;

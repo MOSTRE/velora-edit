@@ -13,7 +13,7 @@ Production URL:
 https://velora-edit.pages.dev
 
 Preview deployment:
-https://9320d320.velora-edit.pages.dev
+https://bafacb33.velora-edit.pages.dev
 
 Branch:
 main
@@ -22,10 +22,10 @@ Build:
 PASS (`npm run build`, 148 static pages, output `dist/`)
 
 Tests:
-PASS (lint 0 issues, typecheck 0 errors, 8/8 tests, seed check 100 products 0 errors)
+PASS (lint 0 issues, typecheck 0 errors, 15/15 tests, seed check 100 products 0 errors)
 
 Products:
-100
+100 demo-marked development records (real-product pipeline ready; awaiting 50 approved AliExpress URLs — see data/aliexpress-input.txt)
 
 Founders:
 PASS (`/founders` live, `/admin/founders` present behind dev gate)
@@ -37,7 +37,7 @@ Supabase:
 NOT CONFIGURED (migrations 001 + 002 verified in repo, not applied to a live project)
 
 Deployment:
-VERIFIED LIVE (Production environment, branch main, commit 01ab0ef, HTTP 200 on all checked routes)
+VERIFIED LIVE (Production environment, branch main, commit fb6e465, HTTP 200 on all checked routes; redesign + real-photo config + importer pipeline live)
 
 Build command:
 npm run build

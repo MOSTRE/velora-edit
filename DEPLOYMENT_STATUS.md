@@ -13,7 +13,7 @@ Production URL:
 https://velora-edit.pages.dev
 
 Preview deployment:
-https://bafacb33.velora-edit.pages.dev
+https://a756fff5.velora-edit.pages.dev
 
 Branch:
 main
@@ -22,10 +22,10 @@ Build:
 PASS (`npm run build`, 148 static pages, output `dist/`)
 
 Tests:
-PASS (lint 0 issues, typecheck 0 errors, 15/15 tests, seed check 100 products 0 errors)
+PASS (lint 0 issues, typecheck 0 errors, 16/16 tests, seed check 19 products 0 errors)
 
 Products:
-100 demo-marked development records (real-product pipeline ready; awaiting 50 approved AliExpress URLs — see data/aliexpress-input.txt)
+19 verified real AliExpress records (retailer titles, local retailer imagery, price fallback, pending affiliate conversion). Import evidence: data/resolved.json, data/image-report.json, data/import-report.json. 2 listings excluded (multi-piece sets incl. watches, no fitting category); 29 input URLs unresolvable (retailer anti-bot block, no bypass attempted).
 
 Founders:
 PASS (`/founders` live, `/admin/founders` present behind dev gate)
@@ -37,7 +37,7 @@ Supabase:
 NOT CONFIGURED (migrations 001 + 002 verified in repo, not applied to a live project)
 
 Deployment:
-VERIFIED LIVE (Production environment, branch main, commit fb6e465, HTTP 200 on all checked routes; redesign + real-photo config + importer pipeline live)
+VERIFIED LIVE (Production environment, branch main, HTTP 200 on all checked routes; real catalog + pending-affiliate flow live)
 
 Build command:
 npm run build
@@ -54,6 +54,7 @@ Verified live:
 - /journal/ → 200
 - /edit/new-arrivals/ → 200
 - /edit/quiet-luxury/ → 200
-- /product/noir-signet/ → 200, affiliate CTA + disclosure + rel="sponsored noopener" + canonical + OpenGraph present
+- /product/heart-moissanite-ring/ → 200, Shop CTA → verified AliExpress source URL, pending-conversion notice, rel="noopener", local imagery, price fallback, canonical + OpenGraph present
+- /product/o-link-collar-chain/ → 200
 - /robots.txt → 200, /sitemap.xml → 200
-- /search-index.json → 100 products
+- /search-index.json → 19 products, 0 mock records

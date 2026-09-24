@@ -13,7 +13,7 @@ Production URL:
 https://velora-edit.pages.dev
 
 Preview deployment:
-https://a756fff5.velora-edit.pages.dev
+https://14f1b1cc.velora-edit.pages.dev
 
 Branch:
 main
@@ -22,10 +22,10 @@ Build:
 PASS (`npm run build`, 148 static pages, output `dist/`)
 
 Tests:
-PASS (lint 0 issues, typecheck 0 errors, 16/16 tests, seed check 19 products 0 errors)
+PASS (lint 0 issues, typecheck 0 errors, 18/18 tests, seed check 19 products 0 errors)
 
 Products:
-19 verified real AliExpress records (retailer titles, local retailer imagery, price fallback, pending affiliate conversion). Import evidence: data/resolved.json, data/image-report.json, data/import-report.json. 2 listings excluded (multi-piece sets incl. watches, no fitting category); 29 input URLs unresolvable (retailer anti-bot block, no bypass attempted).
+19 verified published · 0 draft · 2 invalid (multi-piece sets, no fitting category) · 29 blocked (retailer anti-bot, no bypass) · 0 duplicates. Evidence: data/import-report.json, data/pending.json (admin-visible).
 
 Founders:
 PASS (`/founders` live, `/admin/founders` present behind dev gate)

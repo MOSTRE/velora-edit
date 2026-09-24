@@ -98,6 +98,7 @@ h1, h2, h3, .serif {
   .grid-products { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .grid-3, .grid-2 { grid-template-columns: 1fr; }
   .wrap { padding: 0 16px; }
+  .table { display: block; overflow-x: auto; white-space: nowrap; }
 }
 
 /* Product card image */

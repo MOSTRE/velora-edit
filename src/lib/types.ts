@@ -27,6 +27,8 @@ export interface Product {
   source_product_id?: string;
   source_last_checked?: string | null; // ISO timestamp
   affiliate_verified?: boolean;
+  tracking_id?: string; // affiliate tracking identifier (server-side only, never rendered)
+  affiliate_checked_at?: string | null; // ISO timestamp of last successful link verification
   source_price?: number | null;
   source_currency?: string;
   price_checked_at?: string | null; // ISO timestamp; if stale/missing, show "See current price on AliExpress"

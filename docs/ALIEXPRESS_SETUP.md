@@ -56,16 +56,17 @@ must never appear in built frontend assets.
 
 ## Testing before going live
 
-1. With credentials set locally, run a server-side-only check that calls
-   `generateAffiliateLink()` for one approved URL from
-   `data/aliexpress-input.txt` and prints the returned tracking link.
-   Confirm the link resolves to the same product.
-2. Attach returned links via `/admin/affiliate-links` (validate → attach),
-   which flips products from `affiliate_verified: false` to verified and
-   switches their CTA to `rel="sponsored noopener"` with the commission
-   disclosure automatically.
-3. Re-run `npm test && npm run build`, redeploy, and spot-check a converted
-   product page.
+Ready-made runner (server-side only, secrets never printed):
+
+```bash
+node scripts/convert-affiliate.mjs --dry-run            # plan, no API calls
+node scripts/convert-affiliate.mjs --test-url <url>     # getProductByUrl + generateAffiliateLink on ONE approved URL
+node scripts/convert-affiliate.mjs                      # convert published links + resolve blocked URLs via API
+```
+
+The `--test-url` run verifies ID match, title/images present, link host
+allowlist, and tracking-ID echo — printing booleans only, never the link or
+credentials. Only proceed to the full run after it passes.
 
 Until then, the honest state remains: direct retailer links, pending notice,
 `rel="noopener"`, no commission claims.

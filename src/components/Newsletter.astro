@@ -1,0 +1,55 @@
+---
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+---
+<section class:list={['newsletter', compact && 'compact']} aria-label="Newsletter">
+  <div class="wrap inner reveal">
+    <p class="eyebrow"><span class="rule"></span>The Sunday Edit</p>
+    <h2>One email. Five pieces.<br />Nothing excessive.</h2>
+    <p class="muted">A short Sunday note with the pieces actually worth seeing. No spam, unsubscribe anytime.</p>
+    <form data-newsletter>
+      <label class="sr" for="nl-email">Email address</label>
+      <input id="nl-email" type="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+      <button class="btn" type="submit">Subscribe</button>
+    </form>
+    <p class="tiny muted">By subscribing, you agree to receive VELORA EDIT updates.</p>
+    <p class="small" data-newsletter-msg role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<style>
+  .newsletter { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fff; }
+  .inner { padding: 64px 24px; max-width: 720px; text-align: center; }
+  h2 { font-size: clamp(30px, 4vw, 46px); margin: 12px 0; }
+  form { display: flex; gap: 8px; margin: 20px 0 10px; }
+  input { flex: 1; border: 1px solid var(--line); padding: 14px; font: inherit; }
+  .sr { position: absolute; left: -9999px; }
+  @media (max-width: 560px) { form { flex-direction: column; } }
+</style>
+
+<script>
+  // @ts-nocheck — browser-only newsletter script
+  (function () {
+    document.querySelectorAll('[data-newsletter]').forEach(function (form) {
+      var msg = form.parentElement.querySelector('[data-newsletter-msg]');
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var email = new FormData(form).get('email');
+        email = String(email || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'Please enter a valid email address.'; return; }
+        try {
+          var subs = JSON.parse(localStorage.getItem('velora-newsletter') || '[]');
+          subs.push({ email: email, consent: true, created_at: new Date().toISOString() });
+          localStorage.setItem('velora-newsletter', JSON.stringify(subs));
+          var arr = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
+          arr.push({ event: 'newsletter_signup', timestamp: new Date().toISOString(), anonymous_session_id: localStorage.getItem('velora-sid') || 'x', page_url: location.href });
+          localStorage.setItem('velora-events-v1', JSON.stringify(arr.slice(-2000)));
+          // Optional Supabase sync (anon key only, RLS insert-only)
+          var url = document.querySelector('meta[name="supabase-url"]');
+        } catch (err) {}
+        msg.textContent = 'Thank you — you are on the list. See you Sunday.';
+        form.reset();
+      });
+    });
+  })();
+</script>

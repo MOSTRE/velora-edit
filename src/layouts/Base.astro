@@ -1,0 +1,90 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  jsonLd?: string[];
+  noindex?: boolean;
+}
+
+const {
+  title = 'VELORA EDIT — Curated jewelry that looks more expensive than it is',
+  description = 'VELORA EDIT is a curated jewelry discovery platform. A rotating selection of pieces chosen for proportion, finish and everyday wear.',
+  canonical,
+  ogImage = '/images/og-default.svg',
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
+
+const site = 'https://velora-edit.pages.dev';
+const url = canonical || site + Astro.url.pathname;
+const og = ogImage.startsWith('http') ? ogImage : site + ogImage;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={url} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta property="og:site_name" content="VELORA EDIT" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={url} />
+  <meta property="og:image" content={og} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={og} />
+  <meta name="theme-color" content="#F6F3EE" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  {jsonLd.map((s) => <script type="application/ld+json" set:html={s} />)}
+  <slot name="head" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <slot name="announce" />
+  <slot name="header" />
+  <main id="main"><slot /></main>
+  <slot name="footer" />
+
+  <script>
+    // Sticky header border, reveal-on-scroll, reduced-motion aware. Zero dependencies.
+    (function () {
+      var header = document.querySelector('[data-header]');
+      function onScroll() {
+        if (!header) return;
+        if (window.scrollY > 8) header.setAttribute('data-scrolled', 'true');
+        else header.removeAttribute('data-scrolled');
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce && 'IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+      } else {
+        document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      }
+    })();
+  </script>
+</body>
+</html>
+
+<style>
+  [data-header] { position: sticky; top: 0; z-index: 100; background: rgba(246,243,238,0.92); backdrop-filter: blur(10px); transition: box-shadow .25s ease, border-color .25s ease; border-bottom: 1px solid transparent; }
+  [data-header][data-scrolled] { border-bottom-color: var(--line); box-shadow: 0 8px 24px rgba(17,17,17,.06); }
+</style>

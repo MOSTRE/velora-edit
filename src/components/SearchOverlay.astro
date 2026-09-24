@@ -1,0 +1,91 @@
+---
+---
+<div class="overlay" data-search hidden role="dialog" aria-modal="true" aria-label="Search">
+  <div class="wrap panel">
+    <div class="row">
+      <input data-search-input type="search" placeholder="Search rings, chains, quiet luxury…" aria-label="Search products" autocomplete="off" />
+      <button class="iconbtn" data-search-close aria-label="Close search">✕</button>
+    </div>
+    <div class="cols">
+      <div>
+        <p class="eyebrow">Suggestions</p>
+        <div class="chips" data-search-suggest>
+          <button>signet</button><button>gold chain</button><button>hoops</button><button>silver</button><button>cuff</button>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">Popular</p>
+        <p class="small"><a href="/edit/under-20">Under €20</a> · <a href="/edit/quiet-luxury">Quiet Luxury</a> · <a href="/jewelry/rings">Rings</a> · <a href="/jewelry/chains">Chains</a></p>
+      </div>
+    </div>
+    <div data-search-results class="results" aria-live="polite"></div>
+  </div>
+</div>
+
+<style>
+  .overlay { position: fixed; inset: 0; z-index: 300; background: rgba(17,17,17,.45); padding: 8vh 16px 16px; }
+  .panel { background: var(--bg); border: 1px solid var(--line); max-width: 760px; margin: 0 auto; padding: 24px; }
+  .row { display: flex; gap: 8px; }
+  input[type="search"] { flex: 1; font: inherit; font-size: 20px; font-family: var(--serif); padding: 12px 14px; border: 1px solid var(--line); background: #fff; }
+  .iconbtn { background: none; border: 1px solid var(--line); padding: 0 16px; cursor: pointer; font-size: 16px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chips button { border: 1px solid var(--line); background: #fff; padding: 8px 12px; cursor: pointer; font-size: 13px; }
+  .results { display: grid; gap: 8px; margin-top: 18px; }
+  .results a { display: flex; justify-content: space-between; gap: 12px; background: #fff; border: 1px solid var(--line-soft); padding: 10px 14px; font-size: 14px; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  // @ts-nocheck — browser-only search script
+  (function () {
+    var overlay = document.querySelector('[data-search]');
+    var input = document.querySelector('[data-search-input]');
+    var results = document.querySelector('[data-search-results]');
+    var openers = document.querySelectorAll('[data-search-open]');
+    var index = null;
+    function open() { overlay.removeAttribute('hidden'); input.focus(); }
+    function close() { overlay.setAttribute('hidden', ''); }
+    openers.forEach(function (b) { b.addEventListener('click', open); });
+    document.querySelector('[data-search-close]').addEventListener('click', close);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); open(); }
+      if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) close();
+    });
+    document.querySelectorAll('[data-search-suggest] button').forEach(function (b) {
+      b.addEventListener('click', function () { input.value = b.textContent; run(input.value); input.focus(); });
+    });
+    var t;
+    input.addEventListener('input', function () { clearTimeout(t); t = setTimeout(function () { run(input.value); }, 180); });
+    async function load() {
+      if (index) return index;
+      var r = await fetch('/search-index.json');
+      index = await r.json();
+      return index;
+    }
+    async function run(q) {
+      q = (q || '').trim().toLowerCase();
+      if (!q) { results.innerHTML = ''; return; }
+      var data = await load();
+      var words = q.split(/\s+/);
+      var hits = data.products.filter(function (p) {
+        var t = (p.title + ' ' + p.category + ' ' + (p.tags || []).join(' ')).toLowerCase();
+        return words.every(function (w) { return t.includes(w); });
+      }).slice(0, 8);
+      try {
+        var sid = localStorage.getItem('velora-sid') || 'x';
+        var arr = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
+        arr.push({ event: 'search', query: q, timestamp: new Date().toISOString(), anonymous_session_id: sid, page_url: location.href });
+        localStorage.setItem('velora-events-v1', JSON.stringify(arr.slice(-2000)));
+      } catch (e) {}
+      if (!hits.length) {
+        results.innerHTML = '<p><strong>Nothing matched your search.</strong></p><p class="small muted">Explore the latest edit.</p><p><a class="btn btn-ghost" href="/edit/new-finds">Explore the latest edit</a></p>';
+        return;
+      }
+      results.innerHTML = hits.map(function (p) {
+        return '<a href="/product/' + p.slug + '"><span>' + p.title + '</span><span class="muted">€' + Number(p.price).toFixed(2) + '</span></a>';
+      }).join('');
+    }
+  })();
+</script>

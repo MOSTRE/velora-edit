@@ -1,0 +1,49 @@
+---
+---
+<footer slot="footer">
+  <div class="wrap foot">
+    <div class="brand">
+      <div class="logo">VELORA EDIT</div>
+      <p class="muted">Curated jewelry. Nothing excessive.</p>
+      <p class="tiny muted disclosure-short">VELORA EDIT participates in affiliate programs. Some links are affiliate links — we may earn a commission at no extra cost to you. <a href="/affiliate-disclosure">Learn more</a>.</p>
+    </div>
+    <nav aria-label="Explore">
+      <h3>Explore</h3>
+      <a href="/new">New In</a>
+      <a href="/jewelry">Jewelry</a>
+      <a href="/edits">Edits</a>
+      <a href="/journal">Journal</a>
+    </nav>
+    <nav aria-label="Information">
+      <h3>Information</h3>
+      <a href="/about">About</a>
+      <a href="/affiliate-disclosure">Affiliate Disclosure</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <div class="social">
+      <h3>Follow</h3>
+      <a href="https://instagram.com/" rel="noopener" target="_blank">Instagram</a>
+      <a href="https://tiktok.com/" rel="noopener" target="_blank">TikTok</a>
+      <a href="https://pinterest.com/" rel="noopener" target="_blank">Pinterest</a>
+    </div>
+  </div>
+  <div class="wrap base">
+    <small>© 2026 VELORA EDIT. Curated discovery; purchases are fulfilled by the linked retailer (AliExpress).</small>
+    <small><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/admin">Admin</a></small>
+  </div>
+</footer>
+
+<style>
+  footer { border-top: 1px solid var(--line); background: #fbf9f5; margin-top: 40px; }
+  .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; padding: 56px 24px 32px; }
+  .logo { font-family: var(--serif); letter-spacing: 0.28em; font-weight: 600; font-size: 18px; }
+  nav, .social { display: grid; gap: 8px; align-content: start; }
+  h3 { font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  a { font-size: 14px; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .base { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 24px 26px; border-top: 1px solid var(--line-soft); }
+  @media (max-width: 860px) { .foot { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .foot { grid-template-columns: 1fr; } }
+</style>

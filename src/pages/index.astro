@@ -1,0 +1,176 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ProductCard from '../components/ProductCard.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+import Newsletter from '../components/Newsletter.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { getPublishedProducts, getByCollection, getArticles } from '../lib/store';
+import { orgJsonLd } from '../lib/seo';
+
+const products = getPublishedProducts();
+const featured = products.filter((p) => p.is_featured).slice(0, 6);
+const fresh = products.filter((p) => p.is_new).slice(0, 4);
+const under20 = getByCollection('under-20').slice(0, 4);
+const quiet = getByCollection('quiet-luxury').slice(0, 4);
+const best = products.filter((p) => p.is_best_value).slice(0, 4);
+const articles = getArticles().slice(0, 3);
+---
+<Base
+  title="VELORA EDIT — Curated jewelry that looks more expensive than it is"
+  description="Curated jewelry with a quiet-luxury point of view. Rings, necklaces, bracelets, earrings and chains — including the Under €20 Edit."
+  canonical="https://velora-edit.pages.dev/"
+  ogImage="/images/hero.svg"
+  jsonLd={[orgJsonLd()]}
+>
+  <Header slot="header" />
+  <Footer slot="footer" />
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="copy reveal">
+        <p class="eyebrow"><span class="rule"></span>Curated jewelry · Updated weekly</p>
+        <h1>Jewelry worth<br />discovering.</h1>
+        <p class="sub">Curated pieces with a quiet-luxury point of view.</p>
+        <div class="cta">
+          <a class="btn" href="/edits">Explore the Edit</a>
+          <a class="btn btn-ghost" href="/new">New arrivals</a>
+        </div>
+        <p class="tiny muted">No carts, no clutter — when you love a piece, we send you to the source.</p>
+      </div>
+      <div class="visual reveal">
+        <img src="/images/hero.svg" alt="Editorial still life — a minimal gold-tone ring" width="1200" height="900" fetchpriority="high" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <!-- THE EDIT -->
+  <section class="section hairline">
+    <div class="wrap">
+      <div class="head reveal">
+        <div>
+          <p class="eyebrow"><span class="rule"></span>The Edit</p>
+          <h2>A rotating selection.</h2>
+          <p class="muted">A rotating selection of pieces chosen for proportion, finish and everyday wear.</p>
+        </div>
+        <a class="btn btn-ghost" href="/edits">All edits</a>
+      </div>
+      <div class="grid-products">
+        {featured.map((p) => <ProductCard product={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW FINDS strip -->
+  <section class="section-tight hairline">
+    <div class="wrap">
+      <div class="head reveal">
+        <div><p class="eyebrow"><span class="rule"></span>New finds</p><h2>Just added.</h2></div>
+        <a class="tiny viewlink" href="/new">View all →</a>
+      </div>
+      <div class="grid-products">{fresh.map((p) => <ProductCard product={p} />)}</div>
+    </div>
+  </section>
+
+  <!-- EDITORIAL STORY -->
+  <section class="story">
+    <div class="wrap story-grid">
+      <img class="reveal" src="/images/edit-quiet.svg" alt="Quiet luxury — minimal arch with a single ring" loading="lazy" width="800" height="600" />
+      <div class="reveal">
+        <p class="eyebrow"><span class="rule"></span>Editorial</p>
+        <h2>Quiet luxury is a<br />proportion, not a price.</h2>
+        <p class="muted">Small details, stronger silhouette. We look for even tone, neat edges and forms that sit calmly with everything else you own — then we tell you plainly what each piece is.</p>
+        <a class="btn btn-ghost" href="/journal/affordable-look-expensive">Read the guide</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY GRID -->
+  <section class="section hairline">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow"><span class="rule"></span>Categories</p><h2>Shop by form.</h2></div></div>
+      <div class="catgrid">
+        <a href="/jewelry/rings" class="cat reveal"><span>Rings</span><small>Signets & bands</small></a>
+        <a href="/jewelry/necklaces" class="cat reveal"><span>Necklaces</span><small>Pendants & layers</small></a>
+        <a href="/jewelry/bracelets" class="cat reveal"><span>Bracelets</span><small>Cuffs & bangles</small></a>
+        <a href="/jewelry/earrings" class="cat reveal"><span>Earrings</span><small>Studs & hoops</small></a>
+        <a href="/jewelry/chains" class="cat reveal"><span>Chains</span><small>The foundation</small></a>
+        <a href="/jewelry" class="cat reveal"><span>All jewelry</span><small>The full edit</small></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNDER 20 -->
+  <section class="band">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow"><span class="rule"></span>The Under €20 Edit</p><h2>Less than lunch in Paris.</h2></div><a class="btn btn-ghost" href="/edit/under-20">View the edit</a></div>
+      <div class="grid-products">{under20.map((p) => <ProductCard product={p} />)}</div>
+    </div>
+  </section>
+
+  <!-- QUIET LUXURY -->
+  <section class="section">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow"><span class="rule"></span>Quiet Luxury</p><h2>No logos. No noise.</h2></div><a class="tiny viewlink" href="/edit/quiet-luxury">View the edit →</a></div>
+      <div class="grid-products">{quiet.map((p) => <ProductCard product={p} />)}</div>
+    </div>
+  </section>
+
+  <!-- BEST FINDS -->
+  <section class="section-tight hairline">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow"><span class="rule"></span>Best finds</p><h2>Strongest look per euro.</h2></div><a class="tiny viewlink" href="/edit/best-value">View all →</a></div>
+      <div class="grid-products">{best.map((p) => <ProductCard product={p} />)}</div>
+    </div>
+  </section>
+
+  <!-- JOURNAL -->
+  <section class="section hairline">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow"><span class="rule"></span>Journal</p><h2>Notes on wearing it well.</h2></div><a class="tiny viewlink" href="/journal">All articles →</a></div>
+      <div class="grid-3">
+        {articles.map((a) => (
+          <a class="card reveal" href={`/journal/${a.slug}`}>
+            <div style="aspect-ratio:16/10;overflow:hidden;background:#ece7dd"><img src={a.image} alt={a.title} loading="lazy" width="800" height="500" /></div>
+            <div style="padding:20px"><p class="tiny muted">{a.read_minutes} min read</p><h3 class="serif" style="font-size:24px;margin:6px 0">{a.title}</h3><p class="small muted">{a.excerpt}</p></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Newsletter />
+  <SearchOverlay />
+  <CookieConsent />
+</Base>
+
+<style>
+  .hero { padding: 64px 0 72px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
+  h1 { font-size: clamp(48px, 7vw, 96px); }
+  .sub { font-family: var(--serif); font-size: clamp(19px, 2.4vw, 26px); color: #3a352e; margin: 16px 0 24px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .visual img { width: 100%; height: auto; border: 1px solid var(--line); }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  h2 { font-size: clamp(30px, 4vw, 48px); margin: 8px 0; }
+  .viewlink { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+  .story { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .story-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; padding: 72px 24px; }
+  .story-grid img { width: 100%; border: 1px solid var(--line); }
+  .catgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .cat { border: 1px solid var(--line); background: #fff; padding: 28px 24px; display: grid; gap: 4px; transition: transform .3s ease; }
+  .cat:hover { transform: translateY(-3px); }
+  .cat span { font-family: var(--serif); font-size: 26px; }
+  .cat small { color: var(--muted); }
+  .band { background: #111; color: #f6f3ee; padding: 72px 0; }
+  .band h2 { color: #f6f3ee; }
+  .band .muted { color: #b9b2a6; }
+  .band .btn-ghost { border-color: #f6f3ee; color: #f6f3ee; }
+  .band .btn-ghost:hover { background: #f6f3ee; color: #111; }
+  @media (max-width: 900px) {
+    .hero-grid, .story-grid { grid-template-columns: 1fr; }
+    .catgrid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+---
+<div class="cookie" data-cookie hidden role="dialog" aria-label="Cookie preferences">
+  <p class="small"><strong>A quiet note on cookies.</strong> We use necessary cookies for the site, and optional analytics to understand the edit. <a href="/privacy">Privacy</a></p>
+  <div class="row">
+    <button class="btn btn-ghost" data-cookie-reject>Reject all</button>
+    <button class="btn btn-ghost" data-cookie-manage>Manage</button>
+    <button class="btn" data-cookie-accept>Accept all</button>
+  </div>
+  <div class="prefs" data-cookie-prefs hidden>
+    <label><input type="checkbox" checked disabled /> Necessary (always on)</label>
+    <label><input type="checkbox" data-pref-analytics /> Analytics</label>
+    <label><input type="checkbox" data-pref-marketing /> Marketing</label>
+    <button class="btn" data-cookie-save>Save preferences</button>
+  </div>
+</div>
+
+<style>
+  .cookie { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 400; background: #fff; border: 1px solid var(--line); padding: 18px 20px; max-width: 560px; box-shadow: 0 20px 50px rgba(0,0,0,.12); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .row .btn { padding: 10px 16px; }
+  .prefs { display: grid; gap: 8px; margin-top: 12px; font-size: 14px; }
+</style>
+
+<script>
+  // @ts-nocheck — browser-only consent script
+  (function () {
+    var box = document.querySelector('[data-cookie]');
+    function get() { try { return JSON.parse(localStorage.getItem('velora-consent')); } catch (e) { return null; } }
+    if (!get()) box.removeAttribute('hidden');
+    function save(v) { localStorage.setItem('velora-consent', JSON.stringify(v)); box.setAttribute('hidden', ''); }
+    document.querySelector('[data-cookie-accept]').addEventListener('click', function () {
+      save({ necessary: true, analytics: true, marketing: true, at: new Date().toISOString() });
+    });
+    document.querySelector('[data-cookie-reject]').addEventListener('click', function () {
+      save({ necessary: true, analytics: false, marketing: false, at: new Date().toISOString() });
+    });
+    document.querySelector('[data-cookie-manage]').addEventListener('click', function () {
+      document.querySelector('[data-cookie-prefs]').removeAttribute('hidden');
+    });
+    document.querySelector('[data-cookie-save]').addEventListener('click', function () {
+      save({
+        necessary: true,
+        analytics: document.querySelector('[data-pref-analytics]').checked,
+        marketing: document.querySelector('[data-pref-marketing]').checked,
+        at: new Date().toISOString(),
+      });
+    });
+  })();
+</script>

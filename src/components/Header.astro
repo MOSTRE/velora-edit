@@ -1,0 +1,68 @@
+---
+/* Site chrome: announcement + header + footer + overlays. Used via slots in Base. */
+---
+<div class="announce" slot="announce">
+  The Under €20 Edit is live — <a href="/edit/under-20">explore the selection</a>
+</div>
+
+<header data-header slot="header">
+  <div class="wrap bar">
+    <button class="iconbtn only-mobile" data-menu-open aria-label="Open menu" aria-expanded="false">☰</button>
+    <a class="logo" href="/" aria-label="VELORA EDIT home">VELORA&nbsp;EDIT</a>
+    <nav class="desk" aria-label="Primary">
+      <a href="/new">New In</a>
+      <a href="/jewelry">Jewelry</a>
+      <a href="/edits">Edits</a>
+      <a href="/journal">Journal</a>
+      <a href="/about">About</a>
+    </nav>
+    <div class="actions">
+      <button class="iconbtn" data-search-open aria-label="Search">⌕</button>
+      <a class="iconbtn" href="/wishlist" aria-label="Wishlist">♡</a>
+    </div>
+  </div>
+  <div class="mobilemenu" data-menu hidden>
+    <nav aria-label="Mobile">
+      <a href="/new">New In</a>
+      <a href="/jewelry">Jewelry</a>
+      <a href="/edits">Edits</a>
+      <a href="/journal">Journal</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+  .logo { font-family: var(--serif); font-size: 22px; letter-spacing: 0.28em; font-weight: 600; }
+  .desk { display: flex; gap: 28px; }
+  .desk a { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: #2a2723; padding: 6px 0; border-bottom: 1px solid transparent; }
+  .desk a:hover { border-bottom-color: #111; }
+  .actions { display: flex; gap: 6px; align-items: center; }
+  .iconbtn { background: none; border: 0; font-size: 20px; cursor: pointer; padding: 8px 10px; color: #111; text-decoration: none; }
+  .only-mobile { display: none; }
+  .mobilemenu { border-top: 1px solid var(--line); background: var(--bg); padding: 12px 24px 20px; }
+  .mobilemenu nav { display: grid; gap: 2px; }
+  .mobilemenu a { padding: 12px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
+  @media (max-width: 860px) {
+    .desk { display: none; }
+    .only-mobile { display: block; }
+    .logo { font-size: 18px; }
+  }
+</style>
+
+<script>
+  // @ts-nocheck — browser-only chrome script
+  (function () {
+    var open = document.querySelector('[data-menu-open]');
+    var menu = document.querySelector('[data-menu]');
+    if (open && menu) {
+      open.addEventListener('click', function () {
+        var hidden = menu.hasAttribute('hidden');
+        if (hidden) { menu.removeAttribute('hidden'); open.setAttribute('aria-expanded', 'true'); }
+        else { menu.setAttribute('hidden', ''); open.setAttribute('aria-expanded', 'false'); }
+      });
+    }
+  })();
+</script>

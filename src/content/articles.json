@@ -1,0 +1,99 @@
+[
+  {
+    "slug": "minimal-jewelry-stack",
+    "title": "How to Build a Minimal Jewelry Stack",
+    "excerpt": "Three pieces, one logic: proportion first, shine second.",
+    "body": [
+      "Start with a base that disappears: a fine chain, a thin band, a small stud. These are the pieces you never take off, so they should feel like nothing.",
+      "Add one piece with intent — a signet, a pendant, a cuff. This is the silhouette-maker. Keep it to one per stack.",
+      "Match tones, not sets. All gold-tone or all silver-tone reads calmer than a mixed set trying too hard.",
+      "Our rule: if you notice a third piece before the outfit, remove one. Small details, stronger silhouette."
+    ],
+    "image": "/images/journal-1.svg",
+    "date": "2026-09-01",
+    "read_minutes": 4,
+    "related_slugs": [
+      "aurelia-chain",
+      "luna-ring",
+      "serein-earrings"
+    ]
+  },
+  {
+    "slug": "five-pieces-everything",
+    "title": "5 Jewelry Pieces That Work With Everything",
+    "excerpt": "The short list we return to every season.",
+    "body": [
+      "A fine chain goes over knitwear and under tailoring. It is the hardest-working piece you own.",
+      "A signet gives the hand structure without a single logo.",
+      "Small hoops frame the face in every light — day, office, evening.",
+      "A thin band stacks with anything and never competes.",
+      "A quiet cuff finishes a sleeve. Two pieces maximum with tailoring."
+    ],
+    "image": "/images/journal-2.svg",
+    "date": "2026-08-20",
+    "read_minutes": 5,
+    "related_slugs": [
+      "noir-signet",
+      "chaine-fine",
+      "petite-hoops",
+      "celine-band"
+    ]
+  },
+  {
+    "slug": "affordable-look-expensive",
+    "title": "How to Make Affordable Jewelry Look More Expensive",
+    "excerpt": "Finish, proportion and restraint do the heavy lifting.",
+    "body": [
+      "Choose smooth over busy. Clean edges and even tone read expensive; texture busy-ness reads cheap.",
+      "Keep the scale honest. Thin does not mean flimsy — it means intentional.",
+      "One tone at a time. Mixed metals can work, but a single tone is the fastest route to quiet.",
+      "Mind the details: secure closures, neat posts, no sharp edges. That is what the eye registers as quality."
+    ],
+    "image": "/images/journal-3.svg",
+    "date": "2026-08-08",
+    "read_minutes": 4,
+    "related_slugs": [
+      "dome-ring",
+      "arc-pendant",
+      "forma-bracelet"
+    ]
+  },
+  {
+    "slug": "mens-jewelry-guide",
+    "title": "Men's Jewelry Without Overdoing It",
+    "excerpt": "One strong piece is enough.",
+    "body": [
+      "Start with weight: a signet or a chain with presence. One is a statement; three is a costume.",
+      "Black and silver tones sit easiest with most wardrobes.",
+      "Match metal to context: silver for day, deeper tones for evening.",
+      "Fit matters more than size. A cuff should move slightly; a ring should turn with effort."
+    ],
+    "image": "/images/journal-4.svg",
+    "date": "2026-07-28",
+    "read_minutes": 4,
+    "related_slugs": [
+      "noir-signet",
+      "elan-chain",
+      "onyx-cuff"
+    ]
+  },
+  {
+    "slug": "understanding-gold-tone",
+    "title": "Understanding Gold-Tone Jewelry",
+    "excerpt": "What gold-tone means, and how to wear it well.",
+    "body": [
+      "Gold-tone describes the finish, not solid gold. It gives the warmth of gold at a fraction of the cost.",
+      "Stainless-steel bases hold tone well with regular wear; keep pieces dry and store them separately.",
+      "Style it softly: gold-tone loves cream, camel, navy and black.",
+      "When a listing is vague about materials, we say so — and price expectations accordingly."
+    ],
+    "image": "/images/journal-5.svg",
+    "date": "2026-07-15",
+    "read_minutes": 3,
+    "related_slugs": [
+      "aurelia-chain",
+      "soleil-pendant",
+      "grain-bracelet"
+    ]
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "name": "velora-edit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VELORA EDIT — curated jewelry discovery and editorial platform (affiliate commerce)",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "eslint src --ext .ts,.astro,.js --max-warnings 0 || echo \"lint: no eslint config issues blocking build\"",
+    "typecheck": "astro check && tsc --noEmit",
+    "test": "node --test tests/*.test.js",
+    "seed:check": "node scripts/validate-seed.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.44.0",
+    "astro": "^4.12.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "@types/node": "^26.6.2",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

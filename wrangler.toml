@@ -1,0 +1,10 @@
+name = "velora-edit"
+compatibility_date = "2024-09-01"
+
+[vars]
+AFFILIATE_MODE = "mock"
+PUBLIC_PRICE_MODE = "cached"
+
+# Cloudflare Pages builds Astro statically:
+#   Build command:   npm run build
+#   Output directory: dist

@@ -1,8 +1,8 @@
 ---
-/* Site chrome: announcement + header + footer + overlays. Used via slots in Base. */
+/* Site chrome: announcement + header with mega-menu. Used via slots in Base. */
 ---
 <div class="announce" slot="announce">
-  The Under €20 Edit is live — <a href="/edit/under-20">explore the selection</a>
+  New Arrivals are live — <a href="/edit/new-arrivals">explore the selection</a>
 </div>
 
 <header data-header slot="header">
@@ -10,11 +10,30 @@
     <button class="iconbtn only-mobile" data-menu-open aria-label="Open menu" aria-expanded="false">☰</button>
     <a class="logo" href="/" aria-label="VELORA EDIT home">VELORA&nbsp;EDIT</a>
     <nav class="desk" aria-label="Primary">
-      <a href="/new">New In</a>
-      <a href="/jewelry">Jewelry</a>
-      <a href="/edits">Edits</a>
-      <a href="/journal">Journal</a>
-      <a href="/about">About</a>
+      <div class="mega">
+        <a class="navlink toplink" href="/jewelry" aria-haspopup="true">Jewelry</a>
+        <div class="panel" role="menu" aria-label="Jewelry categories">
+          <a href="/jewelry/rings"><strong>Rings</strong><small>Signets, bands & stacks</small></a>
+          <a href="/jewelry/necklaces"><strong>Necklaces</strong><small>Pendants & layers</small></a>
+          <a href="/jewelry/bracelets"><strong>Bracelets</strong><small>Cuffs & bangles</small></a>
+          <a href="/jewelry/earrings"><strong>Earrings</strong><small>Studs, hoops & drops</small></a>
+          <a href="/jewelry/chains"><strong>Chains</strong><small>The foundation</small></a>
+        </div>
+      </div>
+      <div class="mega">
+        <a class="navlink toplink" href="/edits" aria-haspopup="true">Edits</a>
+        <div class="panel" role="menu" aria-label="Editorial edits">
+          <a href="/edit/under-20"><strong>Under €20</strong><small>Beautiful, not excessive</small></a>
+          <a href="/edit/quiet-luxury"><strong>Quiet Luxury</strong><small>No logos, no noise</small></a>
+          <a href="/edit/gold-edit"><strong>Gold Edit</strong><small>Warm essentials</small></a>
+          <a href="/edit/silver-edit"><strong>Silver Edit</strong><small>Cool staples</small></a>
+          <a href="/edit/for-him"><strong>For Him</strong><small>Weight & presence</small></a>
+          <a href="/edit/for-her"><strong>For Her</strong><small>Soft finish</small></a>
+        </div>
+      </div>
+      <a class="navlink toplink" href="/journal">Journal</a>
+      <a class="navlink toplink" href="/about">About</a>
+      <a class="navlink toplink" href="/founders">Founders</a>
     </nav>
     <div class="actions">
       <button class="iconbtn" data-search-open aria-label="Search">⌕</button>
@@ -23,29 +42,52 @@
   </div>
   <div class="mobilemenu" data-menu hidden>
     <nav aria-label="Mobile">
-      <a href="/new">New In</a>
-      <a href="/jewelry">Jewelry</a>
-      <a href="/edits">Edits</a>
+      <p class="eyebrow">Jewelry</p>
+      <a href="/jewelry/rings">Rings</a>
+      <a href="/jewelry/necklaces">Necklaces</a>
+      <a href="/jewelry/bracelets">Bracelets</a>
+      <a href="/jewelry/earrings">Earrings</a>
+      <a href="/jewelry/chains">Chains</a>
+      <p class="eyebrow">Edits</p>
+      <a href="/edit/new-arrivals">New Arrivals</a>
+      <a href="/edit/under-20">Under €20</a>
+      <a href="/edit/quiet-luxury">Quiet Luxury</a>
+      <a href="/edit/for-him">For Him</a>
+      <a href="/edit/for-her">For Her</a>
+      <p class="eyebrow">More</p>
       <a href="/journal">Journal</a>
       <a href="/about">About</a>
+      <a href="/founders">Founders</a>
       <a href="/contact">Contact</a>
     </nav>
   </div>
 </header>
 
 <style>
-  .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
   .logo { font-family: var(--serif); font-size: 22px; letter-spacing: 0.28em; font-weight: 600; }
-  .desk { display: flex; gap: 28px; }
-  .desk a { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: #2a2723; padding: 6px 0; border-bottom: 1px solid transparent; }
-  .desk a:hover { border-bottom-color: #111; }
+  .desk { display: flex; gap: 30px; align-items: center; }
+  .toplink { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: #2a2723; padding: 10px 0; }
+  .mega { position: relative; }
+  .panel {
+    position: absolute; top: 100%; left: 50%; transform: translate(-50%, 8px);
+    min-width: 300px; background: #fff; border: 1px solid var(--line);
+    box-shadow: 0 24px 60px rgba(17,17,17,0.12); padding: 10px;
+    opacity: 0; visibility: hidden; transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  }
+  .mega:hover .panel, .mega:focus-within .panel { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+  .panel a { display: grid; gap: 2px; padding: 12px 14px; transition: background 0.2s ease; }
+  .panel a:hover { background: var(--bg); }
+  .panel strong { font-family: var(--serif); font-size: 19px; font-weight: 500; }
+  .panel small { color: var(--muted); font-size: 12px; }
   .actions { display: flex; gap: 6px; align-items: center; }
   .iconbtn { background: none; border: 0; font-size: 20px; cursor: pointer; padding: 8px 10px; color: #111; text-decoration: none; }
   .only-mobile { display: none; }
-  .mobilemenu { border-top: 1px solid var(--line); background: var(--bg); padding: 12px 24px 20px; }
+  .mobilemenu { border-top: 1px solid var(--line); background: var(--bg); padding: 12px 24px 24px; max-height: 70vh; overflow-y: auto; }
+  .mobilemenu .eyebrow { margin: 16px 0 2px; }
   .mobilemenu nav { display: grid; gap: 2px; }
-  .mobilemenu a { padding: 12px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
-  @media (max-width: 860px) {
+  .mobilemenu nav > a { padding: 11px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
+  @media (max-width: 900px) {
     .desk { display: none; }
     .only-mobile { display: block; }
     .logo { font-size: 18px; }

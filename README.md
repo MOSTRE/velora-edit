@@ -25,11 +25,13 @@ earn a commission at no extra cost to the buyer.
 
 ## Features
 
-- Editorial homepage (hero, The Edit, New Finds, story, categories, Under €20, Quiet Luxury, Best Finds, journal, newsletter)
-- 30 seeded demo products across rings / necklaces / bracelets / earrings / chains
-- Product pages (`/product/[slug]`) with gallery, editor note, honest pricing, affiliate CTA + adjacent disclosure, related pieces
-- Collections (`/edit/[slug]`, 11 edits), categories (`/jewelry/[category]`), journal (`/journal/[slug]`, 5 guides)
-- Real client-side search overlay (products/collections/categories), no-result state
+- Editorial homepage (full-width cinematic hero, New Edit, Quiet Luxury, Under €20 band, Signature Collection, Editor's Picks, For Him / For Her, Founders, journal, newsletter)
+- 100 seeded demo products (rings 27 / necklaces 23 / bracelets 19 / earrings 17 / chains 14; men's line + unisex line included), each with unique name, copy, imagery and mock affiliate URL (`https://example.com/mock-aliexpress-product-NNN`)
+- Product pages (`/product/[slug]`) with snap gallery + thumbs, sticky info, editor note, honest pricing, premium affiliate CTA + “See current price & availability” + adjacent disclosure, related pieces
+- 18 collections (`/edit/[slug]`: New Arrivals, Quiet Luxury, Under €20, Minimal Essentials, Gold/Silver Edits, For Him/Her, Unisex, Statement, Best Value, Gift Edit, Signature + 5 legacy aliases), categories (`/jewelry/[category]`) with gender/price filters, 4 sort orders and load-more pagination, journal (`/journal/[slug]`, 5 guides)
+- Mega-menu navigation (Jewelry / Edits / Journal / About / Founders), upgraded footer with newsletter + social columns
+- `/founders` split-screen page (Sanae & Salma, editable placeholder bios, quotes) + `/admin/founders` CMS editor (exports `founders.json`; Supabase `founders` table in migration 002)
+- Real client-side search overlay (title/category/collection/tags/material/color, weighted title matches, popular searches, suggested categories, recent searches), no-result state
 - Wishlist (device-local), newsletter (consented, abstracted provider), cookie consent (necessary/analytics/marketing)
 - Affiliate provider abstraction (`src/lib/affiliate/`): `AffiliateProvider`, `AliExpressAffiliateProvider` (official-API-only, server-side), `MockAffiliateProvider`
 - `AFFILIATE_MODE=mock|production` — site never breaks without credentials
@@ -61,7 +63,7 @@ src/
     validation.ts   # forms + CSV import validation
     seo.ts          # JSON-LD helpers (no fake reviews)
     db.ts           # Supabase client (optional)
-  content/          # products.json (30 demo), articles.json
+  content/          # products.json (100 demo), articles.json, founders.json
   styles/global.css
 supabase/migrations/001_init.sql
 supabase/seed/seed.sql

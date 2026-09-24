@@ -43,7 +43,7 @@ const og = ogImage.startsWith('http') ? ogImage : site + ogImage;
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={og} />
-  <meta name="theme-color" content="#F6F3EE" />
+  <meta name="theme-color" content="#F7F5F0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -58,7 +58,7 @@ const og = ogImage.startsWith('http') ? ogImage : site + ogImage;
   <slot name="footer" />
 
   <script>
-    // Sticky header border, reveal-on-scroll, reduced-motion aware. Zero dependencies.
+    // @ts-nocheck — site chrome: sticky header, reveal-on-scroll, subtle parallax. Zero dependencies.
     (function () {
       var header = document.querySelector('[data-header]');
       function onScroll() {
@@ -79,12 +79,57 @@ const og = ogImage.startsWith('http') ? ogImage : site + ogImage;
       } else {
         document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
       }
+      // Wishlist toggles (device-local, works for every product card site-wide).
+      function wishIds() { try { return JSON.parse(localStorage.getItem('velora-wishlist') || '[]'); } catch (e) { return []; } }
+      function paintWishes() {
+        var saved = wishIds();
+        document.querySelectorAll('[data-wish]').forEach(function (b) {
+          var on = saved.indexOf(b.getAttribute('data-wish')) !== -1;
+          var label = b.getAttribute('data-wish-label');
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          b.textContent = (on ? '♥' : '♡') + (label ? ' ' + label : '');
+        });
+      }
+      document.addEventListener('click', function (e) {
+        var b = e.target.closest && e.target.closest('[data-wish]');
+        if (!b) return;
+        e.preventDefault();
+        var id = b.getAttribute('data-wish');
+        var saved = wishIds();
+        var i = saved.indexOf(id);
+        if (i === -1) saved.push(id); else saved.splice(i, 1);
+        try { localStorage.setItem('velora-wishlist', JSON.stringify(saved)); } catch (err) {}
+        paintWishes();
+      });
+      paintWishes();
+      // Subtle parallax for [data-parallax] imagery (skipped with reduced motion).
+      if (!reduce) {
+        var px = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+        if (px.length) {
+          var ticking = false;
+          window.addEventListener('scroll', function () {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(function () {
+              var vh = window.innerHeight;
+              px.forEach(function (el) {
+                var r = el.getBoundingClientRect();
+                if (r.bottom < 0 || r.top > vh) return;
+                var speed = parseFloat(el.getAttribute('data-parallax')) || 0.08;
+                var shift = (r.top + r.height / 2 - vh / 2) * -speed;
+                el.style.transform = 'translateY(' + shift.toFixed(1) + 'px)';
+              });
+              ticking = false;
+            });
+          }, { passive: true });
+        }
+      }
     })();
   </script>
 </body>
 </html>
 
 <style>
-  [data-header] { position: sticky; top: 0; z-index: 100; background: rgba(246,243,238,0.92); backdrop-filter: blur(10px); transition: box-shadow .25s ease, border-color .25s ease; border-bottom: 1px solid transparent; }
+  [data-header] { position: sticky; top: 0; z-index: 100; background: rgba(247,245,240,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: box-shadow .25s ease, border-color .25s ease; border-bottom: 1px solid transparent; }
   [data-header][data-scrolled] { border-bottom-color: var(--line); box-shadow: 0 8px 24px rgba(17,17,17,.06); }
 </style>

@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import ProductCard from '../../components/ProductCard.astro';
+import CollectionGrid from '../../components/CollectionGrid.astro';
 import SearchOverlay from '../../components/SearchOverlay.astro';
 import CookieConsent from '../../components/CookieConsent.astro';
 import Newsletter from '../../components/Newsletter.astro';
@@ -25,19 +25,23 @@ const products = getByCollection(collection.slug);
 >
   <Header slot="header" />
   <Footer slot="footer" />
-  <section class="wrap hero">
-    <p class="eyebrow"><span class="rule"></span>The Edit · {products.length} pieces</p>
-    <h1>{collection.title}</h1>
-    <p class="serif sub">{collection.description}</p>
-    <img src={collection.image} alt={collection.title} width="800" height="600" loading="eager" decoding="async" />
-    <p class="muted editorial">{collection.editorial}</p>
+  <section class="wrap chead">
+    <p class="eyebrow reveal"><span class="rule"></span>The Edit · N°{String(COLLECTIONS.findIndex((c) => c.slug === collection.slug) + 1).padStart(2, '0')} · {products.length} pieces</p>
+    <h1 class="reveal">{collection.title}</h1>
+    <p class="serif sub reveal reveal-d1">{collection.description}</p>
   </section>
-  <section class="section hairline">
+  <div class="wrap"><img class="cover reveal" src={collection.image} alt={collection.title} width="1600" height="700" loading="eager" decoding="async" data-parallax="0.05" /></div>
+  <section class="wrap story">
+    <hr class="hr-gold" />
+    <p class="story-text reveal">{collection.editorial}</p>
+    <p class="caption">The {collection.title} edit — {products.length} pieces, updated as new finds land.</p>
+  </section>
+  <section class="section-tight">
     <div class="wrap">
       {products.length === 0 ? (
         <p>This edit is being restyled — <a href="/edits">browse all edits</a>.</p>
       ) : (
-        <div class="grid-products">{products.map((p) => <ProductCard product={p} />)}</div>
+        <CollectionGrid products={products} pageSize={12} />
       )}
     </div>
   </section>
@@ -54,9 +58,10 @@ const products = getByCollection(collection.slug);
   } catch (e) {}
 </script>
 <style>
-  .hero { padding: 48px 24px 8px; max-width: 900px; }
-  h1 { font-size: clamp(42px, 6vw, 80px); margin: 8px 0; }
-  .sub { font-size: 22px; color: #3a352e; }
-  .hero img { width: 100%; margin: 28px 0 16px; border: 1px solid var(--line); }
-  .editorial { font-size: 17px; max-width: 640px; }
+  .chead { padding: 56px 24px 8px; max-width: 1000px; }
+  h1 { font-size: clamp(46px, 7vw, 92px); margin: 10px 0; }
+  .sub { font-size: clamp(20px, 2.6vw, 28px); font-style: italic; color: #3a352e; }
+  .cover { width: 100%; height: auto; max-height: 520px; object-fit: cover; margin: 28px 0 8px; border: 1px solid var(--line); }
+  .story { max-width: 760px; padding: 32px 24px 8px; }
+  .story-text { font-family: var(--serif); font-size: 22px; line-height: 1.5; margin: 20px 0 8px; }
 </style>

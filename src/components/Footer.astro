@@ -1,29 +1,50 @@
 ---
 ---
 <footer slot="footer">
+  <div class="wrap giant reveal">
+    <p class="eyebrow"><span class="rule"></span>Velora Edit</p>
+    <p class="biglogo">VELORA EDIT</p>
+    <p class="serif tagline">Jewelry worth discovering.</p>
+  </div>
   <div class="wrap foot">
-    <div class="brand">
-      <div class="logo">VELORA EDIT</div>
-      <p class="muted">Curated jewelry. Nothing excessive.</p>
-      <p class="tiny muted disclosure-short">VELORA EDIT participates in affiliate programs. Some links are affiliate links — we may earn a commission at no extra cost to you. <a href="/affiliate-disclosure">Learn more</a>.</p>
+    <div class="news">
+      <h3>The Sunday Edit</h3>
+      <p class="small muted">One email. Five pieces. Nothing excessive.</p>
+      <form data-newsletter-mini>
+        <label class="sr" for="ft-email">Email address</label>
+        <input id="ft-email" type="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+        <button class="btn" type="submit">Join</button>
+      </form>
+      <p class="tiny muted">By subscribing, you agree to receive VELORA EDIT updates.</p>
+      <p class="small" data-newsletter-mini-msg role="status" aria-live="polite"></p>
     </div>
     <nav aria-label="Explore">
       <h3>Explore</h3>
-      <a href="/new">New In</a>
+      <a href="/edit/new-arrivals">New In</a>
       <a href="/jewelry">Jewelry</a>
       <a href="/edits">Edits</a>
-      <a href="/journal">Journal</a>
+      <a href="/founders">Founders</a>
     </nav>
-    <nav aria-label="Information">
-      <h3>Information</h3>
-      <a href="/about">About</a>
+    <nav aria-label="About">
+      <h3>About</h3>
+      <a href="/about">Our story</a>
+      <a href="/contact">Contact</a>
       <a href="/affiliate-disclosure">Affiliate Disclosure</a>
+    </nav>
+    <nav aria-label="Journal">
+      <h3>Journal</h3>
+      <a href="/journal">All articles</a>
+      <a href="/journal/minimal-jewelry-stack">The minimal stack</a>
+      <a href="/journal/affordable-look-expensive">Look expensive</a>
+      <a href="/journal/mens-jewelry-guide">For him</a>
+    </nav>
+    <nav aria-label="Legal">
+      <h3>Legal</h3>
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
-      <a href="/contact">Contact</a>
     </nav>
     <div class="social">
-      <h3>Follow</h3>
+      <h3>Social</h3>
       <a href="https://instagram.com/" rel="noopener" target="_blank">Instagram</a>
       <a href="https://tiktok.com/" rel="noopener" target="_blank">TikTok</a>
       <a href="https://pinterest.com/" rel="noopener" target="_blank">Pinterest</a>
@@ -31,19 +52,46 @@
   </div>
   <div class="wrap base">
     <small>© 2026 VELORA EDIT. Curated discovery; purchases are fulfilled by the linked retailer (AliExpress).</small>
-    <small><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/admin">Admin</a></small>
+    <small class="tiny muted">Affiliate links may earn us a commission at no extra cost to you. <a href="/affiliate-disclosure">Learn more</a> · <a href="/admin">Admin</a></small>
   </div>
 </footer>
 
+<script>
+  // @ts-nocheck — footer mini newsletter (same consented storage as main form)
+  (function () {
+    var form = document.querySelector('[data-newsletter-mini]');
+    if (!form) return;
+    var msg = document.querySelector('[data-newsletter-mini-msg]');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = String(new FormData(form).get('email') || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'Please enter a valid email address.'; return; }
+      try {
+        var subs = JSON.parse(localStorage.getItem('velora-newsletter') || '[]');
+        subs.push({ email: email, consent: true, created_at: new Date().toISOString() });
+        localStorage.setItem('velora-newsletter', JSON.stringify(subs));
+      } catch (err) {}
+      msg.textContent = 'Thank you — you are on the list.';
+      form.reset();
+    });
+  })();
+</script>
+
 <style>
-  footer { border-top: 1px solid var(--line); background: #fbf9f5; margin-top: 40px; }
-  .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; padding: 56px 24px 32px; }
-  .logo { font-family: var(--serif); letter-spacing: 0.28em; font-weight: 600; font-size: 18px; }
-  nav, .social { display: grid; gap: 8px; align-content: start; }
+  footer { border-top: 1px solid var(--line); background: #fbf9f4; margin-top: 40px; }
+  .giant { padding: 64px 24px 8px; text-align: left; }
+  .biglogo { font-family: var(--serif); font-size: clamp(44px, 8vw, 110px); letter-spacing: 0.12em; margin: 6px 0 0; line-height: 1; }
+  .tagline { font-size: clamp(18px, 2.4vw, 26px); font-style: italic; color: #3a352e; margin: 8px 0 0; }
+  .foot { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr; gap: 28px; padding: 48px 24px 32px; }
+  .news form { display: flex; gap: 8px; margin: 12px 0 8px; }
+  .news input { flex: 1; min-width: 0; border: 1px solid var(--line); padding: 12px; font: inherit; font-size: 14px; }
+  .news .btn { padding: 12px 18px; }
+  .sr { position: absolute; left: -9999px; }
+  nav, .social, .news { display: grid; gap: 8px; align-content: start; }
   h3 { font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  a { font-size: 14px; }
-  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .foot a { font-size: 14px; }
+  .foot a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .base { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 24px 26px; border-top: 1px solid var(--line-soft); }
-  @media (max-width: 860px) { .foot { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .foot { grid-template-columns: 1fr; } }
+  @media (max-width: 1020px) { .foot { grid-template-columns: 1fr 1fr 1fr; } }
+  @media (max-width: 640px) { .foot { grid-template-columns: 1fr 1fr; } .news { grid-column: 1 / -1; } }
 </style>

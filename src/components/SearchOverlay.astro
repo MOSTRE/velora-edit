@@ -8,14 +8,16 @@
     </div>
     <div class="cols">
       <div>
-        <p class="eyebrow">Suggestions</p>
+        <p class="eyebrow">Popular searches</p>
         <div class="chips" data-search-suggest>
-          <button>signet</button><button>gold chain</button><button>hoops</button><button>silver</button><button>cuff</button>
+          <button>signet</button><button>gold chain</button><button>hoops</button><button>silver</button><button>cuff</button><button>pearl</button><button>tennis</button><button>unisex</button>
         </div>
       </div>
       <div>
-        <p class="eyebrow">Popular</p>
-        <p class="small"><a href="/edit/under-20">Under €20</a> · <a href="/edit/quiet-luxury">Quiet Luxury</a> · <a href="/jewelry/rings">Rings</a> · <a href="/jewelry/chains">Chains</a></p>
+        <p class="eyebrow">Suggested categories</p>
+        <p class="small cats"><a href="/jewelry/rings">Rings</a> · <a href="/jewelry/necklaces">Necklaces</a> · <a href="/jewelry/chains">Chains</a> · <a href="/edit/under-20">Under €20</a> · <a href="/edit/quiet-luxury">Quiet Luxury</a></p>
+        <p class="eyebrow">Recent</p>
+        <div class="chips" data-search-recent><span class="tiny muted">No recent searches yet.</span></div>
       </div>
     </div>
     <div data-search-results class="results" aria-live="polite"></div>
@@ -67,25 +69,53 @@
     async function run(q) {
       q = (q || '').trim().toLowerCase();
       if (!q) { results.innerHTML = ''; return; }
+      results.innerHTML = '<div class="skeleton" aria-hidden="true"></div>';
       var data = await load();
       var words = q.split(/\s+/);
-      var hits = data.products.filter(function (p) {
-        var t = (p.title + ' ' + p.category + ' ' + (p.tags || []).join(' ')).toLowerCase();
-        return words.every(function (w) { return t.includes(w); });
-      }).slice(0, 8);
+      // Search across title, category, collection, tags, material, color and style.
+      var hits = data.products.map(function (p) {
+        var hay = [p.title, p.category, p.subtitle, p.gender, p.color, p.material, (p.tags || []).join(' '), (p.collection || []).join(' ')].join(' ').toLowerCase();
+        var score = 0;
+        var ok = words.every(function (w) {
+          if (p.title.toLowerCase().indexOf(w) !== -1) { score += 3; return true; }
+          if (hay.indexOf(w) !== -1) { score += 1; return true; }
+          return false;
+        });
+        return ok ? { p: p, s: score } : null;
+      }).filter(Boolean).sort(function (a, b) { return b.s - a.s; }).slice(0, 10).map(function (x) { return x.p; });
       try {
         var sid = localStorage.getItem('velora-sid') || 'x';
         var arr = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
         arr.push({ event: 'search', query: q, timestamp: new Date().toISOString(), anonymous_session_id: sid, page_url: location.href });
         localStorage.setItem('velora-events-v1', JSON.stringify(arr.slice(-2000)));
+        var recent = JSON.parse(localStorage.getItem('velora-recent-search') || '[]');
+        recent = [q].concat(recent.filter(function (x) { return x !== q; })).slice(0, 6);
+        localStorage.setItem('velora-recent-search', JSON.stringify(recent));
+        paintRecent();
       } catch (e) {}
       if (!hits.length) {
-        results.innerHTML = '<p><strong>Nothing matched your search.</strong></p><p class="small muted">Explore the latest edit.</p><p><a class="btn btn-ghost" href="/edit/new-finds">Explore the latest edit</a></p>';
+        results.innerHTML = '<p><strong>Nothing matched your search.</strong></p><p class="small muted">Explore the latest edit.</p><p><a class="btn btn-ghost" href="/edit/new-arrivals">Explore the latest edit</a></p>';
         return;
       }
       results.innerHTML = hits.map(function (p) {
-        return '<a href="/product/' + p.slug + '"><span>' + p.title + '</span><span class="muted">€' + Number(p.price).toFixed(2) + '</span></a>';
+        return '<a href="/product/' + p.slug + '"><span>' + p.title + ' <small class="muted">' + p.category + '</small></span><span class="muted">€' + Number(p.price).toFixed(2) + '</span></a>';
       }).join('');
     }
+    function paintRecent() {
+      try {
+        var box = document.querySelector('[data-search-recent]');
+        if (!box) return;
+        var recent = JSON.parse(localStorage.getItem('velora-recent-search') || '[]');
+        if (!recent.length) { box.innerHTML = '<span class="tiny muted">No recent searches yet.</span>'; return; }
+        box.innerHTML = '';
+        recent.forEach(function (q) {
+          var b = document.createElement('button');
+          b.textContent = q;
+          b.addEventListener('click', function () { input.value = q; run(q); input.focus(); });
+          box.appendChild(b);
+        });
+      } catch (e) {}
+    }
+    paintRecent();
   })();
 </script>

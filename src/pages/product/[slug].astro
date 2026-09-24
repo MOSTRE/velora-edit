@@ -42,17 +42,23 @@ const isMock = product.affiliate_url.includes('example.com');
 
   <div class="wrap pdp">
     <div class="gallery">
-      <img class="main" src={product.image_urls[0]} alt={product.title} width="800" height="1066" fetchpriority="high" decoding="async" data-main />
-      <div class="thumbs">
+      <div class="carousel" data-carousel>
         {product.image_urls.map((u, i) => (
-          <button data-thumb={u} aria-label={`View image ${i + 1}`}>
-            <img src={u} alt="" aria-hidden="true" loading="lazy" width="200" height="266" />
+          <img class="slide" src={u} alt={i === 0 ? product.title : `${product.title} — detail view`} width="800" height="1040" fetchpriority={i === 0 ? 'high' : 'auto'} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" data-main={i === 0 ? 'true' : undefined} />
+        ))}
+      </div>
+      <div class="thumbs" data-thumbs>
+        {product.image_urls.map((u, i) => (
+          <button data-thumb={u} aria-label={`View image ${i + 1}`} aria-pressed={i === 0 ? 'true' : 'false'}>
+            <img src={u} alt="" aria-hidden="true" loading="lazy" width="200" height="260" />
           </button>
         ))}
       </div>
+      <p class="caption">N°{product.id.replace('seed-', '')} — studio placeholder imagery for development.</p>
     </div>
 
     <div class="info">
+      <div class="sticky">
       <p class="eyebrow"><span class="rule"></span>{product.category} · {product.gender === 'unisex' ? 'Unisex' : product.gender === 'men' ? "Men's" : "Women's"}</p>
       <h1>{product.title}</h1>
       {product.subtitle && <p class="serif sub">{product.subtitle}</p>}
@@ -64,6 +70,7 @@ const isMock = product.affiliate_url.includes('example.com');
         )}
         {product.original_price ? <span class="price-was">€{product.original_price.toFixed(2)}</span> : null}
       </div>
+      <p class="tiny muted">See current price & availability on AliExpress</p>
       {badges.length > 0 && <div class="badges">{badges.map((b) => <span class="badge badge-line">{b}</span>)}</div>}
       {product.demo && <p class="tiny demo">Demo piece — sample data for development, not a live AliExpress listing.</p>}
 
@@ -77,6 +84,7 @@ const isMock = product.affiliate_url.includes('example.com');
       </div>
 
       <div class="ctabox">
+        <button class="pcard-wish standalone" data-wish={product.id} data-wish-label="Save" aria-pressed="false" aria-label={`Save ${product.title} to wishlist`}>♡ Save</button>
         <a
           class="btn btn-gold big-cta"
           href={product.affiliate_url}
@@ -111,6 +119,7 @@ const isMock = product.affiliate_url.includes('example.com');
         <summary>Affiliate disclosure</summary>
         <p class="small muted">VELORA EDIT participates in affiliate programs. Some links on this page are affiliate links, which means we may earn a commission when you make a purchase through them, at no additional cost to you. <a href="/affiliate-disclosure">Read the full disclosure</a>.</p>
       </details>
+      </div>
     </div>
   </div>
 
@@ -130,11 +139,26 @@ const isMock = product.affiliate_url.includes('example.com');
 <script>
   // @ts-nocheck — browser-only gallery/analytics script
   (function () {
-    // Gallery
-    var main = document.querySelector('[data-main]');
-    document.querySelectorAll('[data-thumb]').forEach(function (b) {
-      b.addEventListener('click', function () { if (main) main.setAttribute('src', b.getAttribute('data-thumb') || ''); });
+    // Gallery: desktop thumbs swap the lead slide; mobile swipes the snap carousel.
+    var slides = Array.prototype.slice.call(document.querySelectorAll('[data-carousel] .slide'));
+    var thumbs = Array.prototype.slice.call(document.querySelectorAll('[data-thumb]'));
+    function show(i) {
+      slides.forEach(function (s, j) { s.style.display = j === i ? '' : 'none'; });
+      thumbs.forEach(function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    }
+    thumbs.forEach(function (b, i) {
+      b.addEventListener('click', function () { show(i); });
     });
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      // On mobile show the swipeable carousel instead of a single swapped image.
+      slides.forEach(function (s) { s.style.display = ''; });
+      var car = document.querySelector('[data-carousel]');
+      if (car) car.addEventListener('scroll', function () {
+        var w = car.clientWidth || 1;
+        var i = Math.round(car.scrollLeft / w);
+        thumbs.forEach(function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+      }, { passive: true });
+    } else { show(0); }
     // product_view
     try {
       var arr = JSON.parse(localStorage.getItem('velora-events-v1') || '[]');
@@ -158,11 +182,16 @@ const isMock = product.affiliate_url.includes('example.com');
 <style>
   .crumb { padding: 20px 24px 0; }
   .crumb a { text-decoration: underline; text-underline-offset: 3px; }
-  .pdp { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; padding: 24px 24px 72px; }
-  .gallery .main { width: 100%; border: 1px solid var(--line); background: #ece7dd; aspect-ratio: 3/4; object-fit: cover; }
+  .pdp { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; padding: 24px 24px 72px; align-items: start; }
+  .carousel { display: grid; }
+  .carousel .slide { grid-area: 1 / 1; width: 100%; border: 1px solid var(--line); background: #e9e2d4; aspect-ratio: 3/4; object-fit: cover; }
   .thumbs { display: flex; gap: 8px; margin-top: 10px; }
-  .thumbs button { border: 1px solid var(--line); background: #fff; padding: 0; cursor: pointer; width: 72px; }
+  .thumbs button { border: 1px solid var(--line); background: #fff; padding: 0; cursor: pointer; width: 72px; opacity: 0.65; transition: opacity 0.2s ease, border-color 0.2s ease; }
+  .thumbs button[aria-pressed="true"] { opacity: 1; border-color: #111; }
   .thumbs img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
+  .sticky { position: sticky; top: 96px; }
+  .standalone { position: static; opacity: 1; transform: none; width: auto; height: auto; border-radius: 2px; padding: 10px 16px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
+  .standalone[aria-pressed="true"] { background: #111; color: #fff; border-color: #111; }
   h1 { font-size: clamp(38px, 4.5vw, 60px); margin: 8px 0; }
   .sub { font-size: 20px; color: #3a352e; margin: 0 0 12px; }
   .big { font-size: 24px; }
@@ -178,5 +207,11 @@ const isMock = product.affiliate_url.includes('example.com');
   details { border-top: 1px solid var(--line); padding: 14px 0; }
   summary { cursor: pointer; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
   h2 { font-size: clamp(28px, 3.5vw, 42px); margin-bottom: 20px; }
-  @media (max-width: 900px) { .pdp { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) {
+    .pdp { grid-template-columns: 1fr; gap: 28px; }
+    .sticky { position: static; }
+    .carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; scrollbar-width: none; }
+    .carousel::-webkit-scrollbar { display: none; }
+    .carousel .slide { flex: 0 0 100%; grid-area: auto; scroll-snap-align: start; }
+  }
 </style>

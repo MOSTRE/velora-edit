@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sanae",
+    "name": "Sanae",
+    "role": "Co-Founder & Creative Director",
+    "bio": "Sanae brings the creative direction behind VELORA EDIT, with a focus on visual identity, styling and the small details that make a piece feel distinctive.",
+    "quote": "Beauty doesn’t need to be loud to be noticed.",
+    "portrait": "/images/founder-sanae.svg",
+    "socials": {
+      "instagram": "",
+      "tiktok": "",
+      "pinterest": ""
+    },
+    "order": 1,
+    "published": true
+  },
+  {
+    "id": "salma",
+    "name": "Salma",
+    "role": "Co-Founder & Brand Director",
+    "bio": "Salma shapes the brand experience behind VELORA EDIT, from the pieces we discover to the way they are presented, making every collection feel intentional and easy to explore.",
+    "quote": "Good style is often found in the details people almost miss.",
+    "portrait": "/images/founder-salma.svg",
+    "socials": {
+      "instagram": "",
+      "tiktok": "",
+      "pinterest": ""
+    },
+    "order": 2,
+    "published": true
+  }
+]

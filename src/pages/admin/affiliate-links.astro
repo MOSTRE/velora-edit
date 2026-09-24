@@ -8,7 +8,7 @@ const json = JSON.stringify(products.map((p) => ({ slug: p.slug, title: p.title,
   <div class="wrap admin">
     <p class="eyebrow">Admin · Affiliate Links</p>
     <h1>Affiliate links.</h1>
-    <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/settings">Settings</a></nav>
+    <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/founders">Founders</a><a href="/admin/settings">Settings</a></nav>
     <p class="small muted">Paste an AliExpress URL, validate the destination, then attach it to a product. Links are never generated locally as “official” — production conversion happens server-side via the approved affiliate API (<code>src/lib/affiliate/aliexpress.ts</code>).</p>
     <div class="field" style="max-width:560px"><label for="u">AliExpress / affiliate URL</label><input id="u" type="url" placeholder="https://www.aliexpress.com/item/…" /></div>
     <div class="row">

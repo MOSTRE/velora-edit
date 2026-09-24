@@ -1,6 +1,7 @@
 import products from '../content/products.json';
 import articles from '../content/articles.json';
-import type { Product, Article, Collection } from './types';
+import founders from '../content/founders.json';
+import type { Product, Article, Collection, Founder } from './types';
 import { COLLECTIONS } from './types';
 
 const all = products as unknown as Product[];
@@ -58,3 +59,13 @@ export function searchAll(q: string, limit = 12): { products: Product[]; collect
 
 export function getArticles(): Article[] { return arts; }
 export function getArticle(slug: string): Article | undefined { return arts.find((a) => a.slug === slug); }
+
+const foundersAll = founders as unknown as Founder[];
+
+export function getFounders(): Founder[] {
+  return foundersAll.filter((f) => f.published).sort((a, b) => a.order - b.order);
+}
+
+export function getFounder(id: string): Founder | undefined {
+  return foundersAll.find((f) => f.id === id);
+}

@@ -1,0 +1,98 @@
+---
+import ProductCard from './ProductCard.astro';
+import type { Product } from '../lib/types';
+
+interface Props { products: Product[]; pageSize?: number }
+const { products, pageSize = 12 } = Astro.props;
+---
+<div data-filter-root data-pagesize={pageSize}>
+  <div class="toolbar">
+    <div class="chiprow" role="group" aria-label="Filter by">
+      <button class="chip" data-f-gender="all" aria-pressed="true">All</button>
+      <button class="chip" data-f-gender="women" aria-pressed="false">Women</button>
+      <button class="chip" data-f-gender="men" aria-pressed="false">Men</button>
+      <button class="chip" data-f-gender="unisex" aria-pressed="false">Unisex</button>
+      <button class="chip" data-f-under20 aria-pressed="false">Under €20</button>
+    </div>
+    <label class="tiny muted">Sort
+      <select class="sortsel" data-sort aria-label="Sort products">
+        <option value="featured">Featured</option>
+        <option value="newest">Newest</option>
+        <option value="price-asc">Price · low to high</option>
+        <option value="price-desc">Price · high to low</option>
+      </select>
+    </label>
+  </div>
+  <p class="tiny muted" data-count role="status" aria-live="polite"></p>
+  <div class="grid-products" data-grid>
+    {products.map((p) => (
+      <div data-item data-price={p.price ?? 9999} data-gender={p.gender} data-new={p.is_new ? '1' : '0'} data-created={p.created_at} data-score={p.editorial_score}>
+        <ProductCard product={p} />
+      </div>
+    ))}
+  </div>
+  <div class="more"><button class="btn btn-ghost" data-more hidden>Load more</button></div>
+</div>
+
+<script>
+  // @ts-nocheck — client-side filter / sort / load-more (progressive enhancement over server grid)
+  (function () {
+    document.querySelectorAll('[data-filter-root]').forEach(function (root) {
+      var grid = root.querySelector('[data-grid]');
+      var items = Array.prototype.slice.call(grid.querySelectorAll('[data-item]'));
+      var more = root.querySelector('[data-more]');
+      var count = root.querySelector('[data-count]');
+      var size = parseInt(root.getAttribute('data-pagesize') || '12', 10);
+      var gender = 'all', under20 = false, sort = 'featured', shown = size;
+      // Featured order = editorial score, captured at render.
+      items.forEach(function (el, i) { el.setAttribute('data-pos', String(i)); });
+      function apply() {
+        var visible = items.filter(function (el) {
+          if (gender !== 'all' && el.getAttribute('data-gender') !== gender) return false;
+          if (under20 && parseFloat(el.getAttribute('data-price')) >= 20) return false;
+          return true;
+        });
+        visible.sort(function (a, b) {
+          if (sort === 'price-asc') return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+          if (sort === 'price-desc') return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+          if (sort === 'newest') {
+            var n = (b.getAttribute('data-new') === '1') - (a.getAttribute('data-new') === '1');
+            if (n !== 0) return n;
+            return b.getAttribute('data-created').localeCompare(a.getAttribute('data-created'));
+          }
+          return parseFloat(b.getAttribute('data-score')) - parseFloat(a.getAttribute('data-score'));
+        });
+        items.forEach(function (el) { el.style.display = 'none'; });
+        visible.slice(0, shown).forEach(function (el) {
+          el.style.display = '';
+          grid.appendChild(el);
+          el.querySelectorAll('.reveal:not(.in)').forEach(function (r) { r.classList.add('in'); });
+        });
+        count.textContent = 'Showing ' + Math.min(shown, visible.length) + ' of ' + visible.length + ' pieces';
+        if (more) more.hidden = visible.length <= shown;
+      }
+      root.querySelectorAll('[data-f-gender]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          gender = b.getAttribute('data-f-gender');
+          root.querySelectorAll('[data-f-gender]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+          shown = size; apply();
+        });
+      });
+      var u20 = root.querySelector('[data-f-under20]');
+      if (u20) u20.addEventListener('click', function () {
+        under20 = !under20;
+        u20.setAttribute('aria-pressed', under20 ? 'true' : 'false');
+        shown = size; apply();
+      });
+      var sel = root.querySelector('[data-sort]');
+      if (sel) sel.addEventListener('change', function () { sort = sel.value; shown = size; apply(); });
+      if (more) more.addEventListener('click', function () { shown += size; apply(); });
+      apply();
+    });
+  })();
+</script>
+
+<style>
+  .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 24px 0 8px; }
+  .more { text-align: center; margin: 32px 0 8px; }
+</style>

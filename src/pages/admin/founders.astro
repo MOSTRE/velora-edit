@@ -1,0 +1,93 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getFounders } from '../../lib/store';
+
+const founders = getFounders();
+const seedJson = JSON.stringify(founders);
+---
+<Base title="Admin · Founders — VELORA EDIT" noindex={true}>
+  <div class="wrap admin">
+    <p class="eyebrow">Admin · Founders</p>
+    <h1>Founders.</h1>
+    <nav class="tabs"><a href="/admin">Dashboard</a><a href="/admin/products">Products</a><a href="/admin/affiliate-links">Affiliate Links</a><a href="/admin/import">Import</a><a href="/admin/analytics">Analytics</a><a href="/admin/founders">Founders</a><a href="/admin/settings">Settings</a></nav>
+    <p class="small muted">Bios are <strong>not</strong> hard-coded: edit below, then <strong>Export JSON</strong> and commit to <code>src/content/founders.json</code> to publish. Drafts save on this device only. Do not invent personal history — keep copy to verified, editable placeholders.</p>
+    <div data-forms></div>
+    <div class="row">
+      <button class="btn" data-save>Save drafts (this device)</button>
+      <button class="btn btn-ghost" data-export>Export JSON</button>
+      <a class="btn btn-ghost" href="/founders">Preview page</a>
+    </div>
+    <p class="small" data-msg role="status"></p>
+  </div>
+
+  <script define:vars={{ seedJson }}>
+    // @ts-nocheck — browser-only founders CMS
+    (function () {
+      if (sessionStorage.getItem('velora-admin') !== '1') location.href = '/admin';
+      var seed = JSON.parse(seedJson);
+      function stored() { try { return JSON.parse(localStorage.getItem('velora-founders') || 'null') || seed; } catch (e) { return seed; } }
+      var data = stored();
+      var box = document.querySelector('[data-forms]');
+      var msg = document.querySelector('[data-msg]');
+      function draw() {
+        box.innerHTML = '';
+        data.slice().sort(function (a, b) { return a.order - b.order; }).forEach(function (f) {
+          var el = document.createElement('fieldset');
+          el.innerHTML =
+            '<legend>' + f.name + ' <small>(' + f.id + ')</small></legend>' +
+            '<div class="grid">' +
+            '<div class="field"><label>Name</label><input data-k="name" value="' + esc(f.name) + '"></div>' +
+            '<div class="field"><label>Role</label><input data-k="role" value="' + esc(f.role) + '"></div>' +
+            '<div class="field"><label>Portrait path</label><input data-k="portrait" value="' + esc(f.portrait) + '"></div>' +
+            '<div class="field"><label>Display order</label><input data-k="order" type="number" value="' + f.order + '"></div>' +
+            '<div class="field"><label>Instagram URL</label><input data-k="ig" value="' + esc(f.socials.instagram) + '"></div>' +
+            '<div class="field"><label>TikTok URL</label><input data-k="tt" value="' + esc(f.socials.tiktok) + '"></div>' +
+            '<div class="field"><label>Pinterest URL</label><input data-k="pin" value="' + esc(f.socials.pinterest) + '"></div>' +
+            '<div class="field"><label><input type="checkbox" data-k="pub" ' + (f.published ? 'checked' : '') + '> Published</label></div>' +
+            '</div>' +
+            '<div class="field"><label>Bio (editable placeholder — no invented history)</label><textarea data-k="bio" rows="3">' + esc(f.bio) + '</textarea></div>' +
+            '<div class="field"><label>Founder quote</label><textarea data-k="quote" rows="2">' + esc(f.quote) + '</textarea></div>';
+          el.setAttribute('data-id', f.id);
+          box.appendChild(el);
+        });
+      }
+      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+      function collect() {
+        box.querySelectorAll('fieldset').forEach(function (el) {
+          var f = data.find(function (x) { return x.id === el.getAttribute('data-id'); });
+          if (!f) return;
+          el.querySelectorAll('[data-k]').forEach(function (inp) {
+            var k = inp.getAttribute('data-k');
+            if (k === 'pub') f.published = inp.checked;
+            else if (k === 'order') f.order = parseInt(inp.value, 10) || f.order;
+            else if (k === 'ig') f.socials.instagram = inp.value.trim();
+            else if (k === 'tt') f.socials.tiktok = inp.value.trim();
+            else if (k === 'pin') f.socials.pinterest = inp.value.trim();
+            else f[k] = inp.value;
+          });
+        });
+      }
+      draw();
+      document.querySelector('[data-save]').addEventListener('click', function () {
+        collect();
+        try { localStorage.setItem('velora-founders', JSON.stringify(data)); } catch (e) {}
+        msg.textContent = 'Drafts saved on this device. Export JSON + commit to publish.';
+      });
+      document.querySelector('[data-export]').addEventListener('click', function () {
+        collect();
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'founders.json'; a.click();
+      });
+    })();
+  </script>
+</Base>
+<style>
+  .admin{padding:48px 24px 72px;max-width:900px}h1{font-size:clamp(36px,5vw,56px)}
+  .tabs{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0;font-size:13px;font-weight:600}
+  fieldset{border:1px solid var(--line);background:#fff;padding:20px;margin:16px 0}
+  legend{font-family:var(--serif);font-size:24px;padding:0 8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+</style>

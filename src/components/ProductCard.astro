@@ -1,30 +1,28 @@
 ---
 import { formatPrice, badgesFor, type Product } from '../lib/types';
-interface Props { product: Product; eager?: boolean }
-const { product: p, eager = false } = Astro.props;
+interface Props { product: Product; eager?: boolean; index?: number }
+const { product: p, eager = false, index = 0 } = Astro.props;
 const badges = badgesFor(p).slice(0, 2);
 const alt = p.image_urls[1] || p.image_urls[0];
+const num = p.id.replace('seed-', '');
+const stagger = index % 3 === 1 ? 'reveal-d1' : index % 3 === 2 ? 'reveal-d2' : '';
 ---
-<article class="card pcard reveal">
-  <a href={`/product/${p.slug}`} aria-label={p.title} data-product-link={p.slug}>
+<article class={`pcard reveal ${stagger}`} data-card>
+  <a href={`/product/${p.slug}`} aria-label={`${p.title} — view piece`} data-product-link={p.slug}>
     <div class="pcard-media">
-      <img class="main" src={p.thumbnail_url} alt={p.title} loading={eager ? 'eager' : 'lazy'} decoding="async" width="400" height="533" />
-      {alt && alt !== p.thumbnail_url && <img class="alt" src={alt} alt="" aria-hidden="true" loading="lazy" decoding="async" width="400" height="533" />}
-      {badges.length > 0 && <span class="badge" style="position:absolute;top:12px;left:12px">{badges[0]}</span>}
-    </div>
-    <div class="pcard-body">
-      <div class="tiny muted" style="letter-spacing:.14em;text-transform:uppercase">{p.category} · {p.gender === 'unisex' ? 'Unisex' : p.gender === 'men' ? "Men's" : "Women's"}</div>
-      <h3 class="pcard-name">{p.title}</h3>
-      <div class="pcard-meta">
-        <span class="price">{formatPrice(p)}</span>
-        {p.original_price ? <span class="price-was">€{p.original_price.toFixed(2)}</span> : null}
-      </div>
-      {p.editor_pick && <div class="tiny" style="color:var(--gold);font-weight:600;margin-top:6px">Editor's Pick</div>}
-      <span class="tiny view">View piece →</span>
+      <img class="main" src={p.thumbnail_url} alt={p.title} loading={eager ? 'eager' : 'lazy'} decoding="async" width="400" height="520" />
+      {alt && alt !== p.thumbnail_url && <img class="alt" src={alt} alt="" aria-hidden="true" loading="lazy" decoding="async" width="400" height="520" />}
+      {badges.length > 0 && <span class="badge pcard-badge">{badges[0]}</span>}
+      <span class="pcard-view" aria-hidden="true">View piece</span>
     </div>
   </a>
+  <button class="pcard-wish" data-wish={p.id} aria-pressed="false" aria-label={`Save ${p.title} to wishlist`}>♡</button>
+  <div class="pcard-body">
+    <div class="pcard-cat">{p.category} · {p.gender === 'unisex' ? 'Unisex' : p.gender === 'men' ? "Men's" : "Women's"}</div>
+    <a href={`/product/${p.slug}`}><h3 class="pcard-name">{p.title}</h3></a>
+    <div class="pcard-meta">
+      <span class="price">{formatPrice(p)}</span>
+      <span class="pcard-num">N°{num}</span>
+    </div>
+  </div>
 </article>
-<style>
-  .view { display: inline-block; margin-top: 10px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
-  .pcard a { display: block; }
-</style>

@@ -18,4 +18,8 @@ for (const p of products) {
   }
 }
 console.log(`${products.length} products checked, ${errors} errors`);
+if (products.length !== 100) {
+  console.error(`expected exactly 100 products, found ${products.length}`);
+  errors++;
+}
 process.exit(errors ? 1 : 0);

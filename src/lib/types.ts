@@ -24,6 +24,7 @@ export interface Product {
   is_featured: boolean;
   is_new: boolean;
   is_best_value: boolean;
+  is_limited?: boolean;
   is_published: boolean;
   status: ProductStatus;
   editorial_score: number; // 0-100 internal only
@@ -56,6 +57,18 @@ export interface Article {
   related_slugs: string[];
 }
 
+export interface Founder {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  quote: string;
+  portrait: string;
+  socials: { instagram: string; tiktok: string; pinterest: string };
+  order: number;
+  published: boolean;
+}
+
 export const CATEGORIES = [
   { slug: 'rings', title: 'Rings', description: 'Signets, bands and sculptural forms.' },
   { slug: 'necklaces', title: 'Necklaces', description: 'Pendants, chains and everyday layers.' },
@@ -65,17 +78,25 @@ export const CATEGORIES = [
 ] as const;
 
 export const COLLECTIONS: Collection[] = [
-  { slug: 'under-20', title: 'The Under €20 Edit', description: 'Proof that proportion matters more than price.', image: '/images/edit-under20.svg', editorial: 'Every piece here costs less than a lunch in Paris — chosen for finish, weight of look, and ease with everything you own.' },
+  { slug: 'new-arrivals', title: 'New Arrivals', description: 'The latest pieces to join the edit.', image: '/images/edit-arrivals.svg', editorial: 'Fresh finds, same strict eye. New pieces land here first — chosen for proportion, finish and everyday wear.' },
   { slug: 'quiet-luxury', title: 'Quiet Luxury', description: 'No logos. No noise. Just form.', image: '/images/edit-quiet.svg', editorial: 'Small details, stronger silhouette. These are the pieces that work without asking for attention.' },
-  { slug: 'minimal-gold', title: 'Minimal Gold', description: 'Warm gold tones, edited to essentials.', image: '/images/edit-gold.svg', editorial: 'Chosen for proportion, finish and ease. Thin bands, soft shine, nothing excessive.' },
-  { slug: 'silver-essentials', title: 'Silver Essentials', description: 'Cool-toned staples for daily wear.', image: '/images/edit-silver.svg', editorial: 'Silver keeps everything honest. Start here if you are building a first stack.' },
+  { slug: 'under-20', title: 'Under €20', description: 'Beautiful doesn’t have to be excessive.', image: '/images/edit-under20.svg', editorial: 'Every piece here costs less than a lunch in Paris — chosen for finish, weight of look, and ease with everything you own.' },
+  { slug: 'minimal-essentials', title: 'Minimal Essentials', description: 'The foundation of every jewelry wardrobe.', image: '/images/edit-minimal.svg', editorial: 'Thin bands, fine chains, small studs. If you are building from zero, start here.' },
+  { slug: 'gold-edit', title: 'Gold Edit', description: 'Warm gold tones, edited to essentials.', image: '/images/edit-gold.svg', editorial: 'Chosen for proportion, finish and ease. Soft shine, nothing excessive.' },
+  { slug: 'silver-edit', title: 'Silver Edit', description: 'Cool-toned staples for daily wear.', image: '/images/edit-silver.svg', editorial: 'Silver keeps everything honest. Crisp, calm, endlessly pairable.' },
   { slug: 'for-him', title: 'For Him', description: 'Signets, chains and cuffs with weight.', image: '/images/edit-him.svg', editorial: "Men's jewelry without overdoing it — one strong piece is enough." },
   { slug: 'for-her', title: 'For Her', description: 'Everyday pieces with a soft finish.', image: '/images/edit-her.svg', editorial: 'The kind of pieces that work with everything, from knitwear to evening.' },
-  { slug: 'everyday', title: 'Everyday Pieces', description: 'Chosen for comfort and repetition.', image: '/images/edit-everyday.svg', editorial: 'If you will wear it four days a week, it belongs here.' },
-  { slug: 'date-night', title: 'Date Night', description: 'A little more polish, still quiet.', image: '/images/edit-date.svg', editorial: 'Low light loves soft metal. Keep it to two pieces.' },
-  { slug: 'gift-edit', title: 'Gift Edit', description: 'Easy to give, hard to get wrong.', image: '/images/edit-gift.svg', editorial: 'Simple forms, adjustable where it matters, and always under control.' },
-  { slug: 'new-finds', title: 'New Finds', description: 'The latest additions to the edit.', image: '/images/edit-new.svg', editorial: 'A rotating selection of pieces chosen for proportion, finish and everyday wear.' },
+  { slug: 'unisex', title: 'Unisex', description: 'Designed to suit any hand, neck or wrist.', image: '/images/edit-unisex.svg', editorial: 'Shared-drawer jewelry: clean forms that look right on everybody.' },
+  { slug: 'statement', title: 'Statement Pieces', description: 'A little more presence, still considered.', image: '/images/edit-statement.svg', editorial: 'For days when quiet isn’t the assignment. One statement piece per outfit is plenty.' },
   { slug: 'best-value', title: 'Best Value', description: 'The strongest look per euro.', image: '/images/edit-value.svg', editorial: 'Not the cheapest — the most considered for what they cost.' },
+  { slug: 'gift-edit', title: 'Gift Edit', description: 'Easy to give, hard to get wrong.', image: '/images/edit-gift.svg', editorial: 'Simple forms, adjustable where it matters, and always under control.' },
+  { slug: 'signature', title: 'The Signature Collection', description: 'The definitive VELORA EDIT selection.', image: '/images/edit-signature.svg', editorial: 'If we could only keep a handful of pieces, it would be these — the silhouettes that define the edit.' },
+  // Legacy aliases — preserved so existing links keep working.
+  { slug: 'minimal-gold', title: 'Minimal Gold', description: 'Warm gold tones, edited to essentials.', image: '/images/edit-gold.svg', editorial: 'Now continued as the Gold Edit — same eye, broader selection.' },
+  { slug: 'silver-essentials', title: 'Silver Essentials', description: 'Cool-toned staples for daily wear.', image: '/images/edit-silver.svg', editorial: 'Now continued as the Silver Edit.' },
+  { slug: 'everyday', title: 'Everyday Pieces', description: 'Chosen for comfort and repetition.', image: '/images/edit-everyday.svg', editorial: 'If you will wear it four days a week, it belongs here. See also Minimal Essentials.' },
+  { slug: 'date-night', title: 'Date Night', description: 'A little more polish, still quiet.', image: '/images/edit-date.svg', editorial: 'Low light loves soft metal. Keep it to two pieces.' },
+  { slug: 'new-finds', title: 'New Finds', description: 'The latest additions to the edit.', image: '/images/edit-new.svg', editorial: 'Now continued as New Arrivals.' },
 ];
 
 export function formatPrice(product: Pick<Product, 'price' | 'currency'>, _mode: string = 'cached'): string {
@@ -91,6 +112,7 @@ export function badgesFor(p: Product): string[] {
   const b: string[] = [];
   if (p.is_new) b.push('NEW');
   if (p.editor_pick) b.push("EDITOR'S PICK");
+  if (p.is_limited) b.push('LIMITED EDIT');
   if (p.is_best_value) b.push('BEST VALUE');
   if (p.price != null && p.price < 20) b.push('UNDER €20');
   return b;

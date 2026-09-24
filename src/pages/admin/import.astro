@@ -114,7 +114,7 @@ import Base from '../../layouts/Base.astro';
       var idx = await (await fetch('/search-index.json')).json();
       var hits = idx.products.filter(function (p) { return (p.title + p.category).toLowerCase().includes(kw.toLowerCase()); }).slice(0, 6);
       document.querySelector('[data-disc]').innerHTML = '<p class="small">' + hits.length + ' candidates for “' + kw + '” → saved as DRAFT (mock, demo data).</p>' +
-        hits.map(function (h) { return '<p class="small">· ' + h.title + ' — €' + Number(h.price).toFixed(2) + '</p>'; }).join('');
+        hits.map(function (h) { return '<p class="small">· ' + h.title + (h.price != null ? ' — €' + Number(h.price).toFixed(2) : ' — price on retailer') + '</p>'; }).join('');
     });
   })();
 </script>

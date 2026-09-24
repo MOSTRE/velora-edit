@@ -100,7 +100,8 @@
         return;
       }
       results.innerHTML = hits.map(function (p) {
-        return '<a href="/product/' + p.slug + '"><span>' + p.title + ' <small class="muted">' + p.category + '</small></span><span>€' + Number(p.price).toFixed(2) + '</span></a>';
+        var price = p.price != null ? '€' + Number(p.price).toFixed(2) : 'See price';
+        return '<a href="/product/' + p.slug + '"><span>' + p.title + ' <small class="muted">' + p.category + '</small></span><span>' + price + '</span></a>';
       }).join('');
     }
     function paintRecent() {

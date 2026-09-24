@@ -24,7 +24,8 @@ import SearchOverlay from '../components/SearchOverlay.astro';
     var idx = await (await fetch('/search-index.json')).json();
     var items = idx.products.filter(function (p) { return ids.includes(p.id); });
     box.innerHTML = items.map(function (p) {
-      return '<article class="card"><a href="/product/' + p.slug + '"><div class="pcard-media"><img src="' + p.image + '" alt="' + p.title + '" loading="lazy"/></div><div class="pcard-body"><h3 class="pcard-name">' + p.title + '</h3><span class="price">€' + Number(p.price).toFixed(2) + '</span></div></a></article>';
+      var price = p.price != null ? '€' + Number(p.price).toFixed(2) : 'See current price';
+      return '<article class="card"><a href="/product/' + p.slug + '"><div class="pcard-media"><img src="' + p.image + '" alt="' + p.title + '" loading="lazy"/></div><div class="pcard-body"><h3 class="pcard-name">' + p.title + '</h3><span class="price">' + price + '</span></div></a></article>';
     }).join('') || '<p>Saved pieces are no longer in the edit.</p>';
   })();
 </script>

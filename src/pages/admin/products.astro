@@ -66,7 +66,7 @@ const json = JSON.stringify(products.map((p) => ({ id: p.id, slug: p.slug, title
           var affOk = !!p.affiliate;
           var imgOk = !!p.image;
           var checked = (p.checked || '').slice(0, 10);
-          return '<tr><td><strong>' + p.title + '</strong><br><small class="muted">' + p.slug + ' · ' + p.status + '</small></td><td>' + (p.category || '—') + '</td><td>€' + Number(p.price || 0).toFixed(2) + '</td><td>' + (affOk ? '✓ verified' : '<b style="color:#a33">missing</b>') + '</td><td>' + (imgOk ? '✓ present' : '<b style="color:#a33">IMAGE_REQUIRED</b>') + '</td><td>' + (p.published ? 'yes' : 'no') + '</td><td><small>' + checked + '</small></td><td><small>' + (p.source || '—') + '</small></td><td><button data-edit="' + p.slug + '">Edit</button></td></tr>';
+          return '<tr><td><strong>' + p.title + '</strong><br><small class="muted">' + p.slug + ' · ' + p.status + '</small></td><td>' + (p.category || '—') + '</td><td>' + (p.price != null ? '€' + Number(p.price).toFixed(2) : '<small>retailer</small>') + '</td><td>' + (affOk ? '✓ verified' : '<b style="color:#a33">missing</b>') + '</td><td>' + (imgOk ? '✓ present' : '<b style="color:#a33">IMAGE_REQUIRED</b>') + '</td><td>' + (p.published ? 'yes' : 'no') + '</td><td><small>' + checked + '</small></td><td><small>' + (p.source || '—') + '</small></td><td><button data-edit="' + p.slug + '">Edit</button></td></tr>';
         }).join('');
       }
       q.addEventListener('input', draw); draw();

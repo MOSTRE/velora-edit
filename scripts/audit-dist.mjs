@@ -36,10 +36,16 @@ for (const f of htmlFiles) {
       if (!fs.existsSync(asset)) broken.push(`${f} -> ${h}`);
     }
   }
-  // product pages: affiliate + disclosure
+  // product pages: affiliate state must be honest —
+  // affiliate links carry sponsored rel + commission disclosure;
+  // pending-conversion pages link the verified source with a pending notice.
   if (f.includes(`${path.sep}product${path.sep}`)) {
-    if (!html.includes('rel="sponsored noopener"')) noSponsored.push(f);
-    if (!html.includes('Affiliate disclosure')) noDisclosure.push(f);
+    const pending = html.includes('affiliate conversion pending');
+    const sponsored = html.includes('rel="sponsored noopener"');
+    const disclosure = html.includes('Affiliate disclosure');
+    if (sponsored && !disclosure) noSponsored.push(f + ' (sponsored without disclosure)');
+    if (!sponsored && !pending) noSponsored.push(f + ' (no sponsored rel, no pending notice)');
+    if (!disclosure && !pending) noDisclosure.push(f);
   }
   if (!html.includes('rel="canonical"')) noCanonical.push(f);
   if (!html.includes('og:title')) noOg.push(f);

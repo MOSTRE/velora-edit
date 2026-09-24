@@ -19,7 +19,7 @@ const flag = p.is_limited ? 'Limited edit' : p.is_new ? 'New' : p.editor_pick ? 
     <div class="pcard-cat">{p.category}</div>
     <a href={`/product/${p.slug}`}><h3 class="pcard-name">{p.title}</h3></a>
     <div class="pcard-meta">
-      <span class="price">{formatPrice(p)}</span>
+      <span class="price">{p.price != null ? formatPrice(p) : 'See current price'}</span>
     </div>
     {flag && <div class="pcard-flag">{flag}</div>}
   </div>

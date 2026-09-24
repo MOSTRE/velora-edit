@@ -25,11 +25,11 @@ export interface Product {
   source_title?: string; // original retailer title; `title` is the editorial display title
   source_name?: string; // e.g. "AliExpress"
   source_product_id?: string;
-  source_last_checked?: string; // ISO timestamp
+  source_last_checked?: string | null; // ISO timestamp
   affiliate_verified?: boolean;
   source_price?: number | null;
   source_currency?: string;
-  price_checked_at?: string; // ISO timestamp; if stale/missing, show "See current price on AliExpress"
+  price_checked_at?: string | null; // ISO timestamp; if stale/missing, show "See current price on AliExpress"
   image_required?: boolean; // true when no legitimate image could be obtained — do not publish
   is_featured: boolean;
   is_new: boolean;
@@ -43,7 +43,7 @@ export interface Product {
   seo_description?: string;
   og_image?: string;
   demo?: boolean; // true for clearly-marked seed/demo products
-  price_freshness?: string; // ISO date of last price verification
+  price_freshness?: string | null; // ISO date of last price verification
   created_at: string;
   updated_at: string;
 }

@@ -16,14 +16,18 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const product = getProductBySlug(slug as string);
 
-if (!product || !product.affiliate_url) {
+if (!product || !(product.affiliate_url || product.source_url)) {
   return Astro.redirect('/404');
 }
 
 const related = getRelated(product, 4);
 const priceMode = (import.meta.env.PUBLIC_PRICE_MODE as string) || 'cached';
 const showPrice = product.price != null && priceMode !== 'redirect';
-const isMock = product.affiliate_url.includes('example.com');
+// Outbound destination: approved affiliate URL when available, otherwise the
+// verified source URL — clearly marked pending affiliate conversion.
+const outboundUrl = product.affiliate_url || product.source_url || '#';
+const affiliateLive = Boolean(product.affiliate_url && product.affiliate_verified !== false);
+const isMock = (product.affiliate_url || '').includes('example.com');
 const flag = product.is_limited ? 'Limited edit' : product.is_new ? 'New' : product.editor_pick ? "Editor's pick" : product.is_best_value ? 'Best value' : '';
 ---
 <Base
@@ -57,7 +61,7 @@ const flag = product.is_limited ? 'Limited edit' : product.is_new ? 'New' : prod
           </button>
         ))}
       </div>
-      <p class="caption">N°{product.id.replace('seed-', '')} — {product.demo ? 'studio placeholder imagery for development.' : 'retailer-supplied imagery.'}</p>
+      <p class="caption">N°{product.id.replace('seed-', '').replace('ali-', '')} — {product.demo ? 'studio placeholder imagery for development.' : 'retailer-supplied imagery.'}</p>
     </div>
 
     <div class="info">
@@ -73,13 +77,18 @@ const flag = product.is_limited ? 'Limited edit' : product.is_new ? 'New' : prod
         </div>
         <a
           class="btn btn-gold big-cta"
-          href={product.affiliate_url}
+          href={outboundUrl}
           target="_blank"
-          rel="sponsored noopener"
+          rel={affiliateLive ? 'sponsored noopener' : 'noopener'}
           data-affiliate-click={product.id}
-          data-affiliate-url={product.affiliate_url}
+          data-affiliate-url={outboundUrl}
+          data-pending={!affiliateLive ? 'true' : undefined}
         >Shop on AliExpress →</a>
-        <p class="tiny muted">Affiliate disclosure: this link may earn VELORA EDIT a commission at no additional cost to you.</p>
+        {affiliateLive ? (
+          <p class="tiny muted">Affiliate disclosure: this link may earn VELORA EDIT a commission at no additional cost to you.</p>
+        ) : (
+          <p class="tiny pending">Direct retailer link — affiliate conversion pending. This shopping link is the verified source page; VELORA EDIT earns no commission on it yet. <a href="/affiliate-disclosure">Learn more</a>.</p>
+        )}
         {isMock && <p class="tiny mock">Mock affiliate destination — development link, not a real person's link.</p>}
         <p><button class="tlink" data-wish={product.id} data-wish-label="Save" aria-pressed="false">♡ Save to wishlist</button></p>
         <hr class="hr-quiet" />
@@ -177,6 +186,8 @@ const flag = product.is_limited ? 'Limited edit' : product.is_new ? 'New' : prod
   .note { font-size: 24px; font-style: italic; line-height: 1.4; }
   .big-cta { width: 100%; padding: 20px; font-size: 13px; margin-top: 8px; }
   .mock { background: #fff7e6; border: 1px solid #e8d9ae; padding: 8px 10px; }
+  .pending { background: #f4efe4; border: 1px solid var(--line); padding: 10px 12px; }
+  .pending a { text-decoration: underline; text-underline-offset: 3px; }
   .tlink { background: none; border: 0; border-bottom: 1px solid var(--ink); cursor: pointer; font: inherit; }
   details { border-top: 1px solid var(--line); padding: 16px 0; }
   summary { cursor: pointer; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; }

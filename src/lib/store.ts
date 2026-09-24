@@ -8,7 +8,7 @@ const all = products as unknown as Product[];
 const arts = articles as unknown as Article[];
 
 export function getPublishedProducts(): Product[] {
-  return all.filter((p) => p.is_published && p.status === 'PUBLISHED' && p.affiliate_url);
+  return all.filter((p) => p.is_published && p.status === 'PUBLISHED' && (p.affiliate_url || p.source_url));
 }
 
 export function getProductBySlug(slug: string): Product | undefined {

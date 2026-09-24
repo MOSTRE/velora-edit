@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { getPublishedProducts } from '../../lib/store';
 const products = getPublishedProducts();
-const json = JSON.stringify(products.map((p) => ({ slug: p.slug, title: p.title, affiliate_url: p.affiliate_url })));
+const json = JSON.stringify(products.map((p) => ({ slug: p.slug, title: p.title, affiliate_url: p.affiliate_url, source_url: p.source_url || '' })));
 ---
 <Base title="Admin · Affiliate Links — VELORA EDIT" noindex={true}>
   <div class="wrap admin">
@@ -17,7 +17,7 @@ const json = JSON.stringify(products.map((p) => ({ slug: p.slug, title: p.title,
       <button class="btn" data-attach>Attach to product</button>
     </div>
     <p class="small" data-msg role="status"></p>
-    <table class="table"><thead><tr><th>Product</th><th>Affiliate URL</th><th>Clicks (this device)</th><th>Updated</th></tr></thead><tbody data-rows></tbody></table>
+    <table class="table"><thead><tr><th>Product</th><th>Outbound (affiliate or pending source)</th><th>Clicks (this device)</th><th>Updated</th></tr></thead><tbody data-rows></tbody></table>
   </div>
   <script define:vars={{ json }}>
     // @ts-nocheck — browser-only link manager
@@ -37,9 +37,10 @@ const json = JSON.stringify(products.map((p) => ({ slug: p.slug, title: p.title,
         var o = {}; try { o = JSON.parse(localStorage.getItem('velora-drafts') || '{}'); } catch (e) {}
         var ev = []; try { ev = JSON.parse(localStorage.getItem('velora-events-v1') || '[]'); } catch (e) {}
         document.querySelector('[data-rows]').innerHTML = products.map(function (p) {
-          var url = (o[p.slug] && o[p.slug].affiliate) || p.affiliate_url;
+          var url = (o[p.slug] && o[p.slug].affiliate) || p.affiliate_url || p.source_url || '—';
+          var pending = !((o[p.slug] && o[p.slug].affiliate) || p.affiliate_url);
           var n = ev.filter(function (e) { return e.event === 'affiliate_click'; }).length;
-          return '<tr><td>' + p.title + '</td><td><small>' + url + '</small></td><td>' + n + ' total</td><td><small>seed</small></td></tr>';
+          return '<tr><td>' + p.title + '</td><td><small>' + url + '</small>' + (pending ? ' <b style="color:#a84">pending conversion</b>' : '') + '</td><td>' + n + ' total</td><td><small>seed</small></td></tr>';
         }).join('');
       }
       draw();

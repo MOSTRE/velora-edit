@@ -1,0 +1,166 @@
+{
+  "date": "2026-09-24T15:00:22.854Z",
+  "published": 19,
+  "excluded": [
+    {
+      "product_id": "1005012514368804",
+      "source_url": "https://www.aliexpress.com/item/1005012514368804.html",
+      "reason": "multi-piece set incl. non-jewelry — no single fitting category",
+      "title": "Conjuntos de joyería de moda para mujer: aretes, collares, pulseras, anillos y relojes; relojes de cuarzo resistentes al"
+    },
+    {
+      "product_id": "1005012862170157",
+      "source_url": "https://www.aliexpress.com/item/1005012862170157.html",
+      "reason": "multi-piece set incl. non-jewelry — no single fitting category",
+      "title": "Conjunto de Joyería de Plata de Ley S925 en Oferta: Collar y Pulsera con Colgante de Piedra de Nacimiento en Forma de Co"
+    }
+  ],
+  "blocked": [
+    {
+      "product_id": "1005013109122692",
+      "source_url": "https://www.aliexpress.com/item/1005013109122692.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005006981022522",
+      "source_url": "https://www.aliexpress.com/item/1005006981022522.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005009775916391",
+      "source_url": "https://www.aliexpress.com/item/1005009775916391.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005010099063361",
+      "source_url": "https://www.aliexpress.com/item/1005010099063361.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005006693466864",
+      "source_url": "https://www.aliexpress.com/item/1005006693466864.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005007370126723",
+      "source_url": "https://www.aliexpress.com/item/1005007370126723.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005009563899480",
+      "source_url": "https://www.aliexpress.com/item/1005009563899480.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005013139718023",
+      "source_url": "https://www.aliexpress.com/item/1005013139718023.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005012499952754",
+      "source_url": "https://www.aliexpress.com/item/1005012499952754.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005004425852189",
+      "source_url": "https://www.aliexpress.com/item/1005004425852189.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005002510977087",
+      "source_url": "https://www.aliexpress.com/item/1005002510977087.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005010674535002",
+      "source_url": "https://www.aliexpress.com/item/1005010674535002.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005012984095109",
+      "source_url": "https://www.aliexpress.com/item/1005012984095109.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005004741639647",
+      "source_url": "https://www.aliexpress.com/item/1005004741639647.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005012119253550",
+      "source_url": "https://www.aliexpress.com/item/1005012119253550.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005009181323126",
+      "source_url": "https://www.aliexpress.com/item/1005009181323126.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005006735917727",
+      "source_url": "https://www.aliexpress.com/item/1005006735917727.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005009666142149",
+      "source_url": "https://www.aliexpress.com/item/1005009666142149.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005006160767864",
+      "source_url": "https://www.aliexpress.com/item/1005006160767864.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005012691067088",
+      "source_url": "https://www.aliexpress.com/item/1005012691067088.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005009873462300",
+      "source_url": "https://www.aliexpress.com/item/1005009873462300.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005010480634736",
+      "source_url": "https://www.aliexpress.com/item/1005010480634736.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005009761651221",
+      "source_url": "https://www.aliexpress.com/item/1005009761651221.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005008611409839",
+      "source_url": "https://www.aliexpress.com/item/1005008611409839.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005012791400260",
+      "source_url": "https://www.aliexpress.com/item/1005012791400260.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005008832656878",
+      "source_url": "https://www.aliexpress.com/item/1005008832656878.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005011739197315",
+      "source_url": "https://www.aliexpress.com/item/1005011739197315.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005012750580847",
+      "source_url": "https://www.aliexpress.com/item/1005012750580847.html",
+      "reason": "no og:title"
+    },
+    {
+      "product_id": "1005010297107108",
+      "source_url": "https://www.aliexpress.com/item/1005010297107108.html",
+      "reason": "no og:title"
+    }
+  ],
+  "affiliate": "none — all outbound links are direct source URLs marked pending affiliate conversion"
+}

@@ -26,7 +26,7 @@ earn a commission at no extra cost to the buyer.
 ## Features
 
 - Editorial homepage (full-width cinematic hero, New Edit, Quiet Luxury, Under €20 band, Signature Collection, Editor's Picks, For Him / For Her, Founders, journal, newsletter)
-- 100 seeded demo products (rings 27 / necklaces 23 / bracelets 19 / earrings 17 / chains 14; men's line + unisex line included), each with unique name, copy, imagery and mock affiliate URL (`https://example.com/mock-aliexpress-product-NNN`)
+- 19 verified real AliExpress products (retailer titles kept as `source_title`, local retailer-supplied imagery, prices via “See current price” fallback, outbound links marked pending affiliate conversion until approved links exist). Pipeline: `data/aliexpress-input.txt` → `scripts/resolve-products.mjs` → `scripts/fetch-images.mjs` → `data/curation.json` → `scripts/build-real-catalog.mjs`. 29 input URLs are currently unresolvable (retailer anti-bot block) — see `data/import-report.json`; never invent data to fill gaps.
 - Product pages (`/product/[slug]`) with snap gallery + thumbs, sticky info, editor note, honest pricing, premium affiliate CTA + “See current price & availability” + adjacent disclosure, related pieces
 - 18 collections (`/edit/[slug]`: New Arrivals, Quiet Luxury, Under €20, Minimal Essentials, Gold/Silver Edits, For Him/Her, Unisex, Statement, Best Value, Gift Edit, Signature + 5 legacy aliases), categories (`/jewelry/[category]`) with gender/price filters, 4 sort orders and load-more pagination, journal (`/journal/[slug]`, 5 guides)
 - Mega-menu navigation (Jewelry / Edits / Journal / About / Founders), upgraded footer with newsletter + social columns
